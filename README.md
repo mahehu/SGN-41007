@@ -3,7 +3,6 @@ Supplementary materials for course http://www.cs.tut.fi/kurssit/SGN-41007/ at TU
 
 * Folder `code`: Jupyter notebook examples
 * Folder `exercises`: tasks for each exercise session
-* Folder `data`: data used in the exercise sessions
 * Folder `slides`: slides from the lectures
 
 Contact: heikki.huttunen@tut.fi
