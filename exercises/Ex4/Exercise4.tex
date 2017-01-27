@@ -1,0 +1,158 @@
+\documentclass[a4paper,12pt]{scrartcl}
+
+\usepackage{bm,amsmath,url,graphicx}
+\usepackage{palatino}
+\usepackage{color, xcolor}
+\usepackage{listings}
+
+
+\newcommand{\n}{{\bf n}}
+\newcommand{\h}{{\bf h}}
+\newcommand{\x}{{\bf x}}
+\newcommand{\w}{{\bf w}}
+\newcommand{\HH}{{\bf H}}
+\newcommand{\C}{{\bf C}}
+\newcommand{\thb}{{\boldsymbol{\theta}}}
+\newcommand{\mub}{{\boldsymbol{\mu}}}
+\newcommand{\python}{{\fbox{\texttt{\bfseries python}}\quad}}
+\newcommand{\pen}{{\fbox{\texttt{\bfseries pen\&paper}}\quad}}
+
+\renewcommand{\familydefault}{\rmdefault}
+
+
+\begin{document}
+\section*{\bf SGN-41007 Pattern Recognition and Machine Learning}
+\emph{Exercise Set 4: February 1--February 3, 2017}
+\bigskip
+\sloppy
+
+\lstdefinestyle{mystyle}{
+  belowcaptionskip=1\baselineskip,
+  breaklines=true,
+  frame=single,
+  xleftmargin=\parindent,
+  language=Python,
+  showstringspaces=false,
+  basicstyle=\ttfamily,
+  keywordstyle=\bfseries\color{green!40!black},
+  commentstyle=\itshape\color{purple!40!black},
+  identifierstyle=\color{blue},
+  stringstyle=\color{orange},
+  moredelim=**[is][\color{red}]{@}{@},
+}
+
+\lstset{language=Python,style=mystyle} 
+
+
+\noindent
+Exercises consist of both pen\&paper and computer assignments.
+Pen\&paper questions are solved at home before exercises, while
+computer assignments are solved during exercise hours. The
+computer assignments are marked by text \python and 
+Pen\&paper questions by text \pen
+
+\begin{enumerate}
+
+\item \pen \emph{Design an LDA classifier manually.}
+
+A dataset consists of two classes, whose distributions are
+assumed Gaussian, and whose sample covariances and means are
+the following:
+\begin{alignat*}{2}
+\mub_1 &= \begin{pmatrix}
+-1\\
+1
+\end{pmatrix}
+ && \mub_2= \begin{pmatrix}
+-6\\
+2
+\end{pmatrix}\\
+\C_1 &= \begin{pmatrix}
+2 & 0.1 \\
+0.1 & 0.2
+\end{pmatrix}
+\qquad 
+&&\C_2 = \begin{pmatrix}
+3 & -2 \\
+-2 & 1
+\end{pmatrix}
+\end{alignat*}
+Calculate the projection vector $\w$.
+In order to be fully manual, invert the $2\times 2$ matrix using
+the rule
+\[
+\begin{pmatrix}
+	a & b\\
+	c & d
+\end{pmatrix}^{-1}
+= 
+\frac{1}{ad - bc}
+\begin{pmatrix}
+	d & -b \\
+	-c & a
+\end{pmatrix}
+\]
+
+\item \pen \emph{Compute the threshold and classify.}
+
+The LDA decision rule requires a threshold $T$:
+\begin{itemize}
+	\item Decide class = 1 if $\w^T\x \ge T$.
+	\item Decide class = 0 if $\w^T\x < T$.
+\end{itemize}
+Compute $T$ by setting it at the center of projected class means,
+$\mub_1$ and $\mub_2$.
+
+ Which class will be predicted for sample $\x = (1,2)$?
+
+\item \pen \emph{Compute the threshold more properly and classify.}
+
+The previous approach to defining the threshold $T$ did not take into account
+the fact that the two classes have different spreads, and the threshold
+should probably not be exactly at the center.
+
+A more appropriate approach would thus compute the projection of
+the multivariate Gaussians and set the threshold accordingly.
+The projected Gaussians are univariate normal: ${\cal N}(\w^T\mub_1, \w^T\C_1\w)$
+and ${\cal N}(\w^T\mub_2, \w^T\C_2\w)$. Formulate the classification 
+problem as a likelihood ratio test and choose the threshold based on that.
+
+Which class will be predicted for sample $\x = (1,2)$?
+
+\item \python \emph{Extract Local Binary Pattern features for classification.}
+
+In this exercise we will extract image features for categorization of traffic signs.
+Download the following file:
+
+
+\url{http://www.cs.tut.fi/courses/SGN-41007/GTSRB_subset.zip}
+
+If has two folders each containing 100 images from the German Traffic Sign
+Recognition Benchmark (GTSRB); a competition organized in IJCNN-2011 conference.
+
+Load all images from the two folders and compute their Local Binary Pattern
+features using \verb+skimage.feature.local_binary_pattern+.\footnote{See
+\url{http://scikit-image.org/docs/dev/auto_examples/plot_local_binary_pattern.html}}
+The function returns an image with same size as the original, so you will
+also have to compute the histogram with \verb+numpy.histogram+.
+Note that this is a similar task to exercise 4 last week.
+The result should be a feature matrix \verb+X+ and label vector \verb+y+.
+
+\item \python \emph{Train classifiers for the GTSRB task.}
+
+Create a list of three classifiers with their default parameters:
+\begin{itemize}
+	\item \verb+sklearn.neighbors.KNeighborsClassifier+
+	\item \verb+sklearn.lda.LDA+
+	\item \verb+sklearn.svm.SVC+
+\end{itemize}
+
+Split your data into two parts---80\% for training and 20\% for testing---using
+\verb+sklearn.cross_validation.train_test_split+. 
+
+Train each classifier in a for loop and assess the accuracy in the test set
+using \verb+sklearn.metrics.accuracy_score+.
+Which one is the best?
+\end{enumerate}
+
+\end{document}          

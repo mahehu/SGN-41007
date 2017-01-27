@@ -1,0 +1,166 @@
+\documentclass[a4paper,12pt]{scrartcl}
+
+\usepackage{bm,amsmath,url,graphicx}
+\usepackage{palatino}
+\usepackage{color, xcolor}
+\usepackage{listings}
+
+
+\newcommand{\n}{{\bf n}}
+\newcommand{\h}{{\bf h}}
+\newcommand{\x}{{\bf x}}
+\newcommand{\HH}{{\bf H}}
+\newcommand{\thb}{{\boldsymbol{\theta}}}
+\newcommand{\python}{{\fbox{\texttt{\bfseries python}}\quad}}
+
+\renewcommand{\familydefault}{\rmdefault}
+
+
+\begin{document}
+\section*{\bf SGN-41007 Pattern Recognition and Machine Learning}
+\emph{Exercise Set 1: January 11 - 12, 2017}
+\bigskip
+\sloppy
+
+\lstdefinestyle{mystyle}{
+  belowcaptionskip=1\baselineskip,
+  breaklines=true,
+  frame=single,
+  xleftmargin=\parindent,
+  language=Python,
+  showstringspaces=false,
+  basicstyle=\ttfamily,
+  keywordstyle=\bfseries\color{green!40!black},
+  commentstyle=\itshape\color{purple!40!black},
+  identifierstyle=\color{blue},
+  stringstyle=\color{orange},
+  moredelim=**[is][\color{red}]{@}{@},
+}
+
+\lstset{language=Python,style=mystyle} 
+
+
+\noindent
+Exercises consist of both pen\&paper and computer assignments.
+Pen\&paper questions are solved at home before exercises, while
+computer assignments are solved during exercise hours. The
+computer assignments are marked by text \python
+
+\begin{enumerate}
+
+\item \python \emph{Load CSV file into Python.}
+
+Download the following file and extract the contents:
+{\small
+\begin{verbatim}
+http://www.cs.tut.fi/courses/SGN-41007/exercises/locationData.zip
+\end{verbatim}
+}
+\label{ex1}
+
+\begin{enumerate}
+	\item Read the file into numpy array using \verb|numpy.loadtxt| function.
+Search for instructions using Google.
+\item When loaded, check the array shape using \verb|numpy.shape|. It should be $600\times 3$.
+\end{enumerate}
+
+\item \python \emph{Plot the contents of the loaded matrix.}
+\begin{enumerate}
+\item Create a 2D plot of the first two columns of the matrix.
+You need to import \verb+matplotlib.pyplot+ and state something like
+\begin{verbatim}
+plt.plot(<column 1>, <column 2>)
+\end{verbatim}
+\item Create a 3D plot of all 3 columns. You will need to create a special subplot 
+for this purpose with 
+\begin{verbatim}
+ax = plt.subplot(1, 1, 1, projection = "3d")
+\end{verbatim}
+After this, the plotting is done as
+\begin{verbatim}
+plt.plot(<column 1>, <column 2>, <column 3>)
+\end{verbatim}
+\end{enumerate}
+
+\item \python \emph{Basic image manipulation routines in Python.}
+\begin{enumerate}
+\item Download the following file to your local folder:
+{\small
+\begin{verbatim}
+http://www.cs.tut.fi/courses/SGN-41007/exercises/oulu.jpg
+\end{verbatim}
+}
+\item Load the image into numpy array using the \verb+imread+ function
+of \verb+matplotlib.image+.
+\footnote{Note: There are several other ways of doing this, such as:
+\texttt{matplotlib.image.imread}, \texttt{scipy.ndimage.imread},\quad 
+\texttt{PIL.Image.open} \quad or \quad \texttt{cv2.imread}}
+
+\item Show the image on screen (\verb|matplotlib.pyplot.imshow|).
+\item Print the image shape.
+\item Compute the mean of the whole image.
+\item Compute the means of the three color channels (R, G, B).
+\item Apply the white tophat operator to the image (\verb|scipy.ndimage.morphology.white_tophat|)
+and show the result on screen.
+
+\end{enumerate}
+
+\item \python \emph{Load Matlab data into Python.}
+\label{ex4}
+\begin{enumerate}
+\item Download the following file to your local folder:
+{\small
+\begin{verbatim}
+http://www.cs.tut.fi/courses/SGN-41007/exercises/twoClassData.mat
+\end{verbatim}
+}
+\item Load the file contents into Python. This can be done as follows.
+\begin{lstlisting}
+>>> from scipy.io import loadmat
+>>> mat = loadmat("twoClassData.mat")
+\end{lstlisting}
+This generates a \lstinline|dict| structure, whose elements can be accessed through their names.
+\begin{lstlisting}
+>>> print(mat.keys()) # Which variables mat contains?
+['y', 'X', '__version__', '__header__', '__globals__']
+>>> X = mat["X"] # Collect the two variables.
+>>> y = mat["y"].ravel()
+\end{lstlisting}
+The function \verb+ravel()+ transforms y from $400\times 1$ matrix into a 400-length array.
+In Python these are different things unlike Matlab.
+
+\item The matrix X contains two-dimensional samples from two
+classes, as defined by y. Plot the data as a scatter plot
+like the picture below.
+Hints:
+\begin{itemize}
+	\item You can access all class 0 samples from X as: \verb+X[y == 0, :]+.
+	\item The samples can be plotted like: \verb+plt.plot(X[:, 0], X[:, 1], 'ro')+
+\end{itemize}
+\centerline{\includegraphics[width=0.6\textwidth]{twoClasses.pdf}}
+
+\end{enumerate}
+\eject 
+
+\item \python \emph{Define a function.}
+\begin{enumerate}
+\item Implement a function that normalizes the data of question \ref{ex4} by
+subtracting the mean and dividing by the standard deviation for each
+column separately. The function call should be:
+\begin{verbatim}
+X_norm = normalize_data(X)
+\end{verbatim}
+\item Test your code with the following lines
+\begin{verbatim}
+X_norm = normalize_data(X)
+np.mean(X_norm, axis = 0) # Should be 0
+np.std(X_norm, axis = 0)  # Should be 1
+\end{verbatim}
+
+
+\end{enumerate}
+
+
+\end{enumerate}
+
+\end{document}          

@@ -1,0 +1,175 @@
+\documentclass[a4paper,12pt]{scrartcl}
+
+\usepackage{bm,amsmath,url,graphicx}
+\usepackage{palatino}
+\usepackage{color, xcolor}
+\usepackage{listings}
+
+
+\newcommand{\n}{{\bf n}}
+\newcommand{\h}{{\bf h}}
+\newcommand{\x}{{\bf x}}
+\newcommand{\HH}{{\bf H}}
+\newcommand{\thb}{{\boldsymbol{\theta}}}
+\newcommand{\python}{{\fbox{\texttt{\bfseries python}}\quad}}
+\newcommand{\pen}{{\fbox{\texttt{\bfseries pen\&paper}}\quad}}
+
+\renewcommand{\familydefault}{\rmdefault}
+
+
+\begin{document}
+\section*{\bf SGN-41007 Pattern Recognition and Machine Learning}
+\emph{Exercise Set 2: January 18 - 20, 2017}
+\bigskip
+\sloppy
+
+\lstdefinestyle{mystyle}{
+  belowcaptionskip=1\baselineskip,
+  breaklines=true,
+  frame=single,
+  xleftmargin=\parindent,
+  language=Python,
+  showstringspaces=false,
+  basicstyle=\ttfamily,
+  keywordstyle=\bfseries\color{green!40!black},
+  commentstyle=\itshape\color{purple!40!black},
+  identifierstyle=\color{blue},
+  stringstyle=\color{orange},
+  moredelim=**[is][\color{red}]{@}{@},
+}
+
+\lstset{language=Python,style=mystyle} 
+
+
+\noindent
+Exercises consist of both pen\&paper and computer assignments.
+Pen\&paper questions are solved at home before exercises, while
+computer assignments are solved during exercise hours. The
+computer assignments are marked by text \python and 
+Pen\&paper questions by text \pen
+
+\begin{enumerate}
+
+\item \pen \emph{Find a maximum likelihood estimator for one sample.}
+
+Suppose we measure one sample $x$ for which we assume the model
+\[
+p(x, \lambda) = \begin{cases}\lambda\exp(-\lambda x) & x \ge 0\\
+0, & x < 0\end{cases}
+\]
+
+\begin{enumerate}
+	\item Write and simplify the expression for $\ln p(x; \lambda)$. For simplicity, you can
+	omit the case $x<0$.
+	\item Compute the derivative $\frac{\partial \ln p(x; \lambda)}{\partial \lambda}$.
+	\item Solve $\frac{\partial \ln p(x; \lambda)}{\partial \lambda} = 0$ with respect to $\lambda$.
+	This is the formula for maximum likelihood estimate of $\lambda$.
+\end{enumerate}
+
+\item \pen \emph{Find a maximum likelihood estimator for many samples.}
+
+Suppose we measure samples $\x = (x[0], x[1],\ldots,x[N-1])$ for which we assume the model
+\[
+p(x[n], \lambda) = \begin{cases}\lambda\exp(-\lambda x[n]) & x[n] \ge 0\\
+0, & x[n] < 0\end{cases}
+\]
+
+\begin{enumerate}
+	\item Write and simplify the expression for $\ln p(\x; \lambda)$. You can assume the
+	samples are independent and $p(\x; \lambda)$ is simply the product of individual
+	probabilities: $p(\x; \lambda) = \prod p(x[n], \lambda)$.
+	\item Compute the derivative $\frac{\partial \ln p(\x; \lambda)}{\partial \lambda}$.
+	\item Solve $\frac{\partial \ln p(\x; \lambda)}{\partial \lambda} = 0$ with respect to $\lambda$.
+	This is the formula for maximum likelihood estimate of $\lambda$.
+\end{enumerate}
+
+\item \python \emph{Same as last week Question 1, but without numpy.}
+
+Download the following file and extract the contents:
+{\small
+\begin{verbatim}
+http://www.cs.tut.fi/courses/SGN-41006/exercises/locationData.zip
+\end{verbatim}
+}
+\label{ex1}
+
+\begin{enumerate}
+\item Read the file into memory one line at a time (in a for loop). See similar example at the end of lecture slide set 1.
+\item Load the same data into another variable using \verb+numpy.loadtxt+. Check that the contents of the 
+two arrays are equal using \verb+numpy.all+ or \verb+numpy.any+.
+\end{enumerate}
+
+\item \python \emph{Implement two utility functions we need later.}
+
+\begin{enumerate}
+\item Implement the following function:
+\begin{verbatim}
+p = gaussian(x, mu, sigma)
+\end{verbatim}
+which returns the Gaussian density with parameters \verb+mu+ and \verb+sigma+ at point \verb+x+.
+In mathematical notation, the function is:
+\[
+p(x; \mu,\sigma) = \frac{1}{\sqrt{2\pi\sigma^2}}\exp\left[-\frac{1}{2\sigma^2} (x-\mu)^2\right]
+\]
+\item Implement the function:
+\begin{verbatim}
+p = log_gaussian(x, mu, sigma)
+\end{verbatim}
+that returns $\ln p(x; \mu,\sigma)$. Do not use the the previous function, because 
+the straightforward solution \verb+p = numpy.log(gaussian(x, mu, sigma))+ would be numerically inaccurate.
+Instead, first manually simplify the expression 
+\[
+\ln p(x; \mu,\sigma) = \ln\left(\frac{1}{\sqrt{2\pi\sigma^2}}\exp\left[-\frac{1}{2\sigma^2} (x-\mu)^2\right]\right)
+\]
+and write the corresponding code.
+\item Plot both functions for \verb+mu = 0+ and \verb+sigma = 1+ in the interval
+$x\in [-5,5]$ to check that the code is correct. \emph{Hint:} create a vector
+of x-coordinates using \verb+numpy.linspace+ and pass that through your functions
+and plot.
+\end{enumerate}
+
+\item \python \emph{Estimate sinusoidal parameters.}
+
+\begin{enumerate}
+\item Generate a 100-sample long synthetic test signal from the model:
+\[
+x[n] = \sin\left( 2\pi f_0 n \right) + w[n], \qquad n = 0,1,\ldots, 99
+\]
+with $f_0 = 0.017$ and $w[n]\sim {\cal N}(0,0.25)$. Note that $w[n]$ is generated
+by \verb+w = numpy.sqrt(0.25) * numpy.random.randn(100)+. Plot the result.
+\item Implement code from estimating the frequency of \verb+x+ using the maximum likelihood 
+estimator:
+\[
+\hat{f}_0 = \text{value of } f \text{ that maximizes } \left|\sum_{n=0}^{N-1} x(n)e^{-2\pi i f n}\right|.
+\]
+Implementation is straightforward by noting that the sum expression is in fact a dot product:
+\[
+\hat{f}_0 = \text{value of } f \text{ that maximizes } \left|\x \cdot {\bf e}\right|,
+\]
+with $\x=(x_0,x_1,\ldots, x_{N-1})$ and ${\bf e}=(e^{-2\pi i f \cdot 0}, e^{-2\pi i f \cdot 1},\ldots , e^{-2\pi i f \cdot (N-1)})$.
+
+Use the following template and fill in the blanks.
+\begin{lstlisting}
+scores = []
+frequencies = []
+
+for f in numpy.linspace(0, 0.5, 1000):
+    
+    # Create vector e. Assume data is in x.
+    
+    n = numpy.arange(100)
+    z = # <compute -2*pi*i*f*n. Imaginary unit is 1j>
+    e = numpy.exp(z)
+		
+    score = # <compute abs of dot product of x and e>
+    scores.append(score)
+    frequencies.append(f)
+
+fHat = frequencies[np.argmax(scores)]
+\end{lstlisting}
+\item Run parts (a) and (b) a few times. Are the results close to true $f_0 = 0.017$?
+\end{enumerate}
+
+\end{enumerate}
+
+\end{document}          
