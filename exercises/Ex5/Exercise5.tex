@@ -82,9 +82,10 @@ and the other of coordinates of $\y$ only.
 
 In the lectures we defined the \emph{logistic loss function}:
 \begin{equation}
-\ell(\w) = \sum_{n = 0}^{N-1} \ln(1 + \exp(y_n\w^T\x_n)).
+\ell(\w) = \sum_{n = 0}^{N-1} \ln(1 + \exp(-y_n\w^T\x_n)).
 \label{eq:grad}
 \end{equation}
+Note that there was a typo in the slides with minus sign missing from the $\exp()$ function.
 
 \begin{enumerate}
 	\item Compute the formula for its gradient $\frac{\partial \ell(\w) }{\partial \w}$.
