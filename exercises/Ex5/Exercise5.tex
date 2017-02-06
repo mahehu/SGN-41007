@@ -82,9 +82,10 @@ and the other of coordinates of $\y$ only.
 
 In the lectures we defined the \emph{logistic loss function}:
 \begin{equation}
-\ell(\w) = \sum_{n = 0}^{N-1} \ln(1 + \exp(y_n\w^T\x_n)).
+\ell(\w) = \sum_{n = 0}^{N-1} \ln(1 + \exp(-y_n\w^T\x_n)).
 \label{eq:grad}
 \end{equation}
+Note that there was a typo in the slides with minus sign missing from the $\exp()$ function.
 
 \begin{enumerate}
 	\item Compute the formula for its gradient $\frac{\partial \ell(\w) }{\partial \w}$.
@@ -106,21 +107,12 @@ In the lectures we defined the \emph{logistic loss function}:
 teaching assistant.
 \item Apply the code for the data downloaded from
 
-\url{https://github.com/mahehu/SGN-41007/tree/master/exercises/Ex5/log_loss_data.zip}
+\url{https://github.com/mahehu/SGN-41007/tree/master/exercises/Ex5/log_loss_data.mat}
 
-The data is in Python's own \emph{pickle} serialization format (similar to \texttt{.mat} in Matlab)%
-\footnote{The name refers to \emph{long term storage} of vegetables in vinegar.}. 
-You can open the container in Python as follows:
+The data is in Matlab format. Load it as follows:
 \begin{verbatim}
-import pickle
-data = pickle.load(open("log_loss_data.pkl"))
-\end{verbatim}
-Better yet, a more pythonic approach would use the \verb+with+ statement (this way the file
-pointer will not be left open after use):
-\begin{verbatim}
-import pickle
-with open("log_loss_data.pkl", "r") as f:
-    data = pickle.load(f)
+from scipy.io import loadmat
+data = loadmat("log_loss_data.mat")
 \end{verbatim}
 
 After this, \verb+data+ is a dict object (similar to \verb+map+ in C++).
