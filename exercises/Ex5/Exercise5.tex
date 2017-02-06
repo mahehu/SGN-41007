@@ -107,26 +107,9 @@ Note that there was a typo in the slides with minus sign missing from the $\exp(
 teaching assistant.
 \item Apply the code for the data downloaded from
 
-\url{https://github.com/mahehu/SGN-41007/tree/master/exercises/Ex5/log_loss_data.mat}
+\url{https://github.com/mahehu/SGN-41007/tree/master/exercises/Ex5/log_loss_data.zip}
 
-The data is in Matlab format. Load it as follows:
-\begin{verbatim}
-from scipy.io import loadmat
-data = loadmat("log_loss_data.mat")
-\end{verbatim}
-
-After this, \verb+data+ is a dict object (similar to \verb+map+ in C++).
-You can see the contents by:
-\begin{verbatim}
->>> data.keys()
-['y', 'X']
-\end{verbatim}
-and access the contents as:
-\begin{verbatim}
->>> X = data["X"]
->>> print X.shape
-(400L, 2L)
-\end{verbatim}
+The data is in CSV format. Load  \verb+X+ and \verb+y+ using \verb+numpy.loadtxt+.
 
 \item Plot the path of $\w$ over 100 iterations and check the accuracy (see plots below).
 
