@@ -96,8 +96,8 @@ $\rho$, show that the variance of the average is given as
 \item \pen {Count the number of parameters in a neural network}
 
 Consider the traditional shallow neural network architecture 
-of Figure~\ref{fig:net}. Suppose our inputs are $28\times 28$
-bitmaps of digits from categories $\{0,1,\ldots, 9\}$.
+of Figure~\ref{fig:net}. Suppose our inputs are $64\times 64$
+bitmaps of two categories of traffic signs.
 \begin{enumerate}
 \item Let the network structure be the following:
 \begin{itemize}
@@ -120,12 +120,14 @@ model.add(Convolution2D(nb_filter = N,
                         nb_col = w,
                         nb_row = h,
                         activation = 'relu',
+												border_mode = 'same',
                         input_shape = (3,64,64)))												
 model.add(MaxPooling2D((2,2)))
 
 model.add(Convolution2D(nb_filter = N,
                         nb_col = w,
                         nb_row = h,
+												border_mode = 'same',
                         activation = 'relu'))												
 model.add(MaxPooling2D((2,2)))  
 
@@ -169,6 +171,19 @@ using \verb+sklearn.cross_validation.train_test_split+.
 Define the network of Question 2b in your code.
 
 \item \python \emph{Compile and train the net.}
+
+\textbf{Note:} You need to set up Keras to use the Theano backend instead of
+Tensorflow (the default). To this aim, your config file \verb+~/.keras/keras.json+
+has to look like this:
+\begin{verbatim}
+{
+    "image_dim_ordering": "th", 
+    "epsilon": 1e-07, 
+    "floatx": "float32", 
+    "backend": "theano",
+    "optimizer": "None"
+}
+\end{verbatim}
 
 Compile and train the network as described in 
 
