@@ -120,14 +120,14 @@ model.add(Convolution2D(nb_filter = N,
                         nb_col = w,
                         nb_row = h,
                         activation = 'relu',
-												border_mode = 'same',
+                        border_mode = 'same',
                         input_shape = (3,64,64)))												
 model.add(MaxPooling2D((2,2)))
 
 model.add(Convolution2D(nb_filter = N,
                         nb_col = w,
                         nb_row = h,
-												border_mode = 'same',
+                        border_mode = 'same',
                         activation = 'relu'))												
 model.add(MaxPooling2D((2,2)))  
 
