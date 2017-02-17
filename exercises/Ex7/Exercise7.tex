@@ -94,18 +94,27 @@ be downloaded in \verb+*.mat+ format from:
 Use \verb+scipy.io.loadmat+ to open the file. Note that your have to ravel
 \verb+y_train+ and \verb+y_test+ so that \texttt{sklearn} will accept them.
 
-\begin{itemize}
+\begin{enumerate}
 	\item Instantiate an RFECV selector (call it \texttt{rfe} from now on). To speed up computation, set \texttt{step = 50} in the constructor.
 	Also set \texttt{verbose = 1} to see the progress.
 	\item Fit the RFECV to \verb+X_train+ and \verb+y_train+.
 	\item Count the number of selected features from \verb+rfe.support_+.
 	\item Plot the errors for different number of features:\\
 	 \verb+plt.plot(range(0,10001,50), rfe.grid_scores_)+
-\end{itemize}
+	\item Compute the accuracy on \verb+X_test+ and \verb+y_test+. You can use \texttt{rfe} as any other classifier.
+\end{enumerate}
 
 \item \python Apply $L_1$ penalized Logistic Regression for feature selection with the arcene dataset.
 Find a good value for parameter $C$ by 10-fold cross-validating the accuracy.
 Study the sparseness of the solution: how many features were selected?
+
+\begin{enumerate}
+	\item Instantiate a LogisticRegression classifier. Set \texttt{penalty = 'l1'} in the constructor.
+	\item Cross validate the accuracy of a range of \texttt{C} values (see earlier exercises).
+	\item Fit the LogisticRegression to \verb+X_train+ and \verb+y_train+.
+	\item Count the number of selected features from \verb+rfe.coef_+.
+	\item Compute the accuracy on \verb+X_test+ and \verb+y_test+.
+\end{enumerate}
 
 \end{enumerate}
 
