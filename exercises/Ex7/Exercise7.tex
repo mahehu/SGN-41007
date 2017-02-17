@@ -1,0 +1,112 @@
+\documentclass[a4paper,12pt]{scrartcl}
+
+\usepackage{bm,amsmath,url,graphicx}
+\usepackage{palatino}
+\usepackage{color, xcolor}
+\usepackage{listings}
+
+
+\newcommand{\n}{\mathbf{ n}}
+\newcommand{\h}{\mathbf{ h}}
+\newcommand{\x}{\mathbf{ x}}
+\newcommand{\y}{\mathbf{ y}}
+\newcommand{\w}{\mathbf{ w}}
+\newcommand{\HH}{\mathbf{ H}}
+\newcommand{\R}{\mathbf{ R}}
+\newcommand{\C}{\mathbf{ C}}
+\newcommand{\thb}{{\boldsymbol{\theta}}}
+\newcommand{\mub}{{\boldsymbol{\mu}}}
+\newcommand{\python}{{\fbox{\texttt{\bfseries python}}\quad}}
+\newcommand{\pen}{{\fbox{\texttt{\bfseries pen\&paper}}\quad}}
+
+\renewcommand{\familydefault}{\rmdefault}
+
+
+\begin{document}
+\section*{SGN-41007 Pattern Recognition and Machine Learning}
+\emph{Exercise Set 7: February 22--February 24, 2017}
+\bigskip
+\sloppy
+
+\lstdefinestyle{mystyle}{
+  belowcaptionskip=1\baselineskip,
+  breaklines=true,
+  frame=single,
+  xleftmargin=\parindent,
+  language=Python,
+  showstringspaces=false,
+  basicstyle=\ttfamily,
+  keywordstyle=\bfseries\color{green!40!black},
+  commentstyle=\itshape\color{purple!40!black},
+  identifierstyle=\color{blue},
+  stringstyle=\color{orange},
+  moredelim=**[is][\color{red}]{@}{@},
+}
+
+\lstset{language=Python,style=mystyle} 
+
+
+\noindent
+Exercises consist of both pen\&paper and computer assignments.
+Pen\&paper questions are solved at home before exercises, while
+computer assignments are solved during exercise hours. The
+computer assignments are marked by  \python and 
+Pen\&paper questions by  \pen
+
+\begin{enumerate}
+
+\item \pen \emph{Error rate confidence limits.}
+
+We train a classifier with a set of training examples, and test the 
+accuracy of the resulting model with a set of $N=100$ test samples.
+The classifier misclassifies $K=5$ of those. 
+
+\begin{enumerate}
+	\item Find the 90\% confidence interval of the result.
+Hint: The classification accuracy can be modeled using
+binomial distribution, whose confidence intervals are 
+discussed here:
+
+\url{https://en.wikipedia.org/wiki/Binomial_distribution#Confidence_intervals}
+
+\item Another classifier misclassifies only 3 test samples.
+Is it better than the first one with statistical significance
+at 90\% confidence level?
+
+\end{enumerate}
+
+\item \pen  In Exercise set 5 (question 2a), we derived the formula for the gradient of log-loss.
+\begin{enumerate}
+	\item Compute the gradient for $L_2$ penalized log-loss.
+	\item Study also the gradient for $L_1$ penalized log-loss. Propose an approximation, whose gradient would be defined for all $\w$.
+\end{enumerate}
+
+\item \python Implement the $L_2$ penalized log-loss minimizer in Python. You can use
+the template of Question 3 at Exercise set 5.
+
+\item \python Apply the recursive feature elimination approach 
+(\verb+sklearn.feature_selection.RFECV+) with logistic regression classifier 
+for the arcene dataset. The data can
+be downloaded in \verb+*.mat+ format from:
+
+{\small \url{http://www.cs.tut.fi/courses/SGN-41007/exercises/arcene.zip}}
+
+Use \verb+scipy.io.loadmat+ to open the file. Note that your have to ravel
+\verb+y_train+ and \verb+y_test+ so that \texttt{sklearn} will accept them.
+
+\begin{itemize}
+	\item Instantiate an RFECV selector (call it \texttt{rfe} from now on). To speed up computation, set \texttt{step = 50} in the constructor.
+	Also set \texttt{verbose = 1} to see the progress.
+	\item Fit the RFECV to \verb+X_train+ and \verb+y_train+.
+	\item Count the number of selected features from \verb+rfe.support_+.
+	\item Plot the errors for different number of features:\\
+	 \verb+plt.plot(range(0,10001,50), rfe.grid_scores_)+
+\end{itemize}
+
+\item \python Apply $L_1$ penalized Logistic Regression for feature selection with the arcene dataset.
+Find a good value for parameter $C$ by 10-fold cross-validating the accuracy.
+Study the sparseness of the solution: how many features were selected?
+
+\end{enumerate}
+
+\end{document}          
