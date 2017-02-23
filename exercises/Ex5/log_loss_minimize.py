@@ -79,7 +79,7 @@ if __name__ == "__main__":
 
     X = np.concatenate((X1.T, X2.T))
     y = np.concatenate((np.ones(N), -1 * np.ones(N)))
-    idx = range(y.size)
+    idx = np.arange(y.size)
     random.shuffle(idx)
 
     X = X[idx,:]
@@ -87,9 +87,6 @@ if __name__ == "__main__":
 
     X[:, 0] = X[:, 0] - X[:, 0].mean()
     X[:, 1] = X[:, 1] - X[:, 1].mean()
-
-    with open("log_loss_data.pkl", "w") as fp:
-        pickle.dump({'X': X, 'y': y}, fp)
 
     w = np.array([1, -1])
 
@@ -102,7 +99,7 @@ if __name__ == "__main__":
         w = w - step_size * grad(w, X, y)
 
         loss_val = log_loss(w, X, y)
-        print loss_val
+        print (loss_val)
         print ("Iteration %d: w = %s (log-loss = %.2f)" % \
               (iteration, str(w), loss_val))
 
