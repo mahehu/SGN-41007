@@ -6,7 +6,7 @@ Supplementary materials for course http://www.cs.tut.fi/kurssit/SGN-41007/ at TU
 * Folder `slides`: slides from the lectures
 * Folder `latex_src`: full sources for the slides
 
-[[https://www.dropbox.com/s/jc13ppjcyvgzzld/Multiclass%20LDA.png?dl=0|alt=LDA]]
-[[https://www.dropbox.com/s/w25rjo4vveucmpr/PCA.png?dl=0|alt=PCA]]
+![LDA](http://www.cs.tut.fi/courses/SGN-41007/Multiclass%20LDA.png)
+![PCA](http://www.cs.tut.fi/courses/SGN-41007/PCA.png)
 
 Contact: heikki.huttunen@tut.fi
