@@ -8,5 +8,6 @@ Supplementary materials for course http://www.cs.tut.fi/kurssit/SGN-41007/ at TU
 
 ![LDA](http://www.cs.tut.fi/courses/SGN-41007/Multiclass%20LDA.png)
 ![PCA](http://www.cs.tut.fi/courses/SGN-41007/PCA.png)
+![LR](http://www.cs.tut.fi/courses/SGN-41007/LR.png)
 
 Contact: heikki.huttunen@tut.fi
