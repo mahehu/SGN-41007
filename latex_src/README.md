@@ -1,3 +1,5 @@
 # Latex sources for slides
 
-* To be published in March 2017
+* Full sources for the slides in `../images/`
+* Published under the MIT license; feel free to use.
+* Pull requests are always welcome.
