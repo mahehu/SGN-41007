@@ -14,6 +14,8 @@ import matplotlib.pyplot as plt
 from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
 from mpl_toolkits.mplot3d import Axes3D
 
+from sklearn.neighbors import KNeighborsClassifier
+
 def onclick(event):
     """
     Function that is run every time when used clicks the mouse.
@@ -78,10 +80,11 @@ if __name__ == "__main__":
     # Don't know why these produce slightly different results.
     # Both seem to work though.
     
-    use_sklearn = False
+    use_sklearn = True
     
     if use_sklearn:
-        clf = LinearDiscriminantAnalysis()
+        #clf = LinearDiscriminantAnalysis()
+        clf = KNeighborsClassifier()
         clf.fit(X, y)
         y_hat = clf.predict(X_test)
  
