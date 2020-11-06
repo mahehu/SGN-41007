@@ -13,6 +13,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
 from mpl_toolkits.mplot3d import Axes3D
+import cv2
 
 from sklearn.neighbors import KNeighborsClassifier
 
@@ -37,7 +38,7 @@ if __name__ == "__main__":
         
     # Load test image and show it.
     
-    img = plt.imread("hh.jpg")
+    img = cv2.imread("hh.jpg")[..., ::-1]
     
     fig = plt.figure()
     ax = fig.add_subplot(111)
@@ -83,8 +84,8 @@ if __name__ == "__main__":
     use_sklearn = True
     
     if use_sklearn:
-        #clf = LinearDiscriminantAnalysis()
-        clf = KNeighborsClassifier()
+        clf = LinearDiscriminantAnalysis()
+        #clf = KNeighborsClassifier()
         clf.fit(X, y)
         y_hat = clf.predict(X_test)
  
