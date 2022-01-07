@@ -93,9 +93,9 @@
 \title{Pattern Recognition and Machine Learning}
 \subtitle{Slide Set 4: Machine Learning: Linear Models}
 \author{Heikki Huttunen\\
-heikki.huttunen@tut.fi}
-\institute{Department of Signal Processing\\Tampere University of Technology}
-\date{January 2017}
+heikki.huttunen@tuni.fi}
+\institute{Signal Processing\\Tampere University}
+\date{October 2020}
 
 \begin{document}
 
@@ -213,7 +213,7 @@ widely used classifiers.
 \end{itemize}
 \item For the first four, we will refer to the \emph{Scikit-Learn}
 module: \url{http://scikit-learn.org/}.
-\item The neural network part will be studied with the \emph{Keras} package: \url{http://keras.io/}.
+\item The neural network part will be studied with the \emph{Tensorflow}: \url{http://tensorflow.org/}.
 \end{itemize}
 \end{frame}
 
@@ -226,7 +226,7 @@ widely used methods.
 \item Instead of each contributor providing their own package, scikit-learn has a unified
 API for each method.
 %\item Altogether over 20 k commits from over 500 contributors.
-\item For details: Pedregosa, \textit{et al.} ''Scikit-learn: Machine learning in Python,'' \textit{The Journal of Machine Learning Research},2011.
+\item For details: Pedregosa, \textit{et al.} ''Scikit-learn: Machine learning in Python,'' \textit{The Journal of Machine Learning Research}, 2011.
 \end{itemize}
 \centerline{\includegraphics[width=0.8\textwidth]{sklearn-pulse.png}}
 \end{frame}
@@ -556,10 +556,10 @@ import numpy as np
 from scipy.linalg import eig
 
 # X0 and X1 contain data of the 2 classes
-m0 = np.mean(X0.T, axis = 0)
-m1 = np.mean(X1.T, axis = 0)
-C0 = np.cov(X0.T - np.tile(m0, (X0.shape[1], 1)), rowvar = False)
-C1 = np.cov(X1.T - np.tile(m1, (X1.shape[1], 1)), rowvar = False)
+m0 = np.mean(X0, axis = 0)
+m1 = np.mean(X1, axis = 0)
+C0 = np.cov(X0 - m0, rowvar = False)
+C1 = np.cov(X1 - m1, rowvar = False)
 
 SB = np.multiply.outer(m1 - m0, m1 - m0)
 SW = C0 + C1
@@ -639,8 +639,8 @@ from scipy.linalg import eig
 m0 = np.mean(X0.T, axis = 0)
 m1 = np.mean(X1.T, axis = 0)
 
-C0 = np.cov(X0.T - np.tile(m0, (X0.shape[1], 1)), rowvar = False)
-C1 = np.cov(X1.T - np.tile(m1, (X1.shape[1], 1)), rowvar = False)
+C0 = np.cov(X0 - m0, rowvar = False)
+C1 = np.cov(X1 - m1, rowvar = False)
 
 w = np.dot(np.linalg.inv(C0 + C1), (m1 - m0))
 
@@ -732,8 +732,7 @@ give a probability score for each class.
 
 \begin{frame}[fragile,allowframebreaks=0.8]{Multiclass LDA}
 \begin{itemize}
-\item In this case,
-the classifier is defined by a set of linear functions
+\item The multiclass LDA is defined by a set of $K$ linear functions---one per class.
 \begin{align*}
 g_1(\x) &= \w_1^T\x + w_1\\
 &\vdots \\
@@ -1178,11 +1177,11 @@ data points with respect to model parameters.
 $y_0, y_1,\ldots, y_{N-1} \in \{1,2,\ldots, K\}$ to have occurred from
 the model with parameters $\thb$ is
 \[
-p(\X \mid \thb) = \prod_{n = 0}^{N-1} p_{y_n}(\x_n; \thb).
+p(\X \mid \thb) = \prod_{n = 0}^{N-1} p(\x_n; \thb, y_n).
 \]
 \item As usual, we consider the log-likelihood instead:
 \[
-\ln p(\X \mid \thb) = \sum_{n = 0}^{N-1} \ln p_{y_n}(\x_n; \thb).
+\ln p(\X \mid \thb) = \sum_{n = 0}^{N-1} \ln p(\x_n; \thb, y_n).
 \]
 \end{itemize}
 \end{frame}
@@ -1231,7 +1230,7 @@ p(\X \mid \w, \y) = \prod_{n = 0}^{N-1} \frac{1}{1 + \exp(-y_n\w^T\x_n)}
 \item In order to maximize the likelihood, we can equivalently minimize the 
 \emph{logistic loss function}:
 \[
-\text{log-loss} = \sum_{n = 0}^{N-1} \ln(1 + \exp(-y_n\w^T\x_n)).
+\ell(\w) = \sum_{n = 0}^{N-1} \ln(1 + \exp(-y_n\w^T\x_n)).
 \]
 \item There exists several algorithms for minimization of logistic loss, \emph{e.g.,}
 \begin{itemize}
@@ -1260,6 +1259,27 @@ p(\X \mid \w, \y) = \prod_{n = 0}^{N-1} \frac{1}{1 + \exp(-y_n\w^T\x_n)}
 \end{enumerate}
 \end{itemize}
 \end{frame}
+
+\begin{frame}[fragile]{Training Logistic Regression Models}
+\begin{columns}
+\column{0.5\textwidth}
+\begin{itemize}
+	\item In the exercises, we will implement log loss minimization for two dimensional data.
+	\begin{enumerate}
+		\item Initialize $\w$ at random.
+		\item Adjust $\w$ towards the negative gradient:
+		\[
+		\w = \w - \epsilon \cdot \ell'(\w)
+		\]
+		\item Return to step 2.
+	\end{enumerate}
+	\item The result is shown on the right.
+\end{itemize}
+\column{0.5\textwidth}
+\includegraphics[width=\textwidth]{log_loss_minimization}
+\end{columns}
+\end{frame}
+
 
 \begin{frame}[fragile]{Example: Effect of Regularization Parameter $C$}
 \begin{columns}

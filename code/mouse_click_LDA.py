@@ -13,9 +13,6 @@ import numpy as np
 import matplotlib.pyplot as plt
 from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
 from mpl_toolkits.mplot3d import Axes3D
-import cv2
-
-from sklearn.neighbors import KNeighborsClassifier
 
 def onclick(event):
     """
@@ -38,7 +35,7 @@ if __name__ == "__main__":
         
     # Load test image and show it.
     
-    img = cv2.imread("hh.jpg")[..., ::-1]
+    img = plt.imread("hh.jpg")
     
     fig = plt.figure()
     ax = fig.add_subplot(111)
@@ -85,7 +82,6 @@ if __name__ == "__main__":
     
     if use_sklearn:
         clf = LinearDiscriminantAnalysis()
-        #clf = KNeighborsClassifier()
         clf.fit(X, y)
         y_hat = clf.predict(X_test)
  
@@ -109,10 +105,11 @@ if __name__ == "__main__":
     # Manipulate the vector form prediction to the original image shape.
     
     class_img = np.reshape(y_hat, img.shape[:2])
-
+    prob_img  = np.reshape(clf.predict_proba(X_test)[:, 1], img.shape[:2])
+    
     fig, ax = plt.subplots(1, 3)
     ax[0].imshow(img)
-    ax[1].imshow(class_img)
+    ax[1].imshow(prob_img)
     img[class_img == 0] = 0
     ax[2].imshow(img)
 

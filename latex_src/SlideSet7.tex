@@ -16,8 +16,13 @@
 \usepackage{hyperref}
 \hypersetup{colorlinks=true, urlcolor=blue}
 
+\usepackage{tikz}
+\usepackage{pgfplots}
+\usepackage{sidecap}
 \DeclareMathOperator*{\minimize}{minimize} %in preamble
  
+%\usefonttheme{professionalfonts}
+
 \newcommand{\N}{{\mathbb{N}}}
 \newcommand{\I}{{\bf I}}
 \newcommand{\C}{{\bf C}}
@@ -55,6 +60,7 @@
 \newcommand{\X}{{\bf X}}
 \newcommand{\x}{{\bf x}}
 \newcommand{\y}{{\bf y}}
+\newcommand{\z}{{\bf z}}
 \newcommand{\p}{{\bf p}}
 \newcommand{\E}{{\bf E}}
 \newcommand{\U}{{\bf U}}
@@ -89,12 +95,13 @@
     \insertframetitle
 }
 
+
 \title{Pattern Recognition and Machine Learning}
-\subtitle{Slide Set 7: Error Assessment and Regularization}
+\subtitle{Slide Set 8: Error Assessment and Regularization}
 \author{Heikki Huttunen\\
-heikki.huttunen@tut.fi}
-\institute{Department of Signal Processing\\Tampere University of Technology}
-\date{February 2017}
+heikki.huttunen@tuni.fi}
+\institute{Signal Processing\\Tampere University}
+\date{November 2020}
 
 \begin{document}
 
@@ -116,7 +123,6 @@ heikki.huttunen@tut.fi}
 }
 
 \lstset{language=Python,style=mystyle} 
-
 
 \begin{frame}{Generalization}
 \begin{itemize}
@@ -265,6 +271,9 @@ to test the generalization over groups.
 \item For example: Data is recorded in 10 sessions; we wish to train with 9 and test with one.
 \item Or: we get images from 10 cameras and would like to have a model that is robust when the 11th
 camera is added.
+\item Scikit-learn has two CV iterators:\verb+LeaveOneGroupOut+ and \verb+GroupShuffleSplit+. 
+\item The K-fold version guarantees that each sample is used for testing exactly once. 
+\item The latter is simpler and more flexible as you can generate as many random splits as you want.
 \end{itemize}
 }
 \column{0.38\textwidth}
@@ -280,7 +289,6 @@ scores = cross_val_score(clf, X, y, cv = logo)
 \end{columns}
 \end{frame}
 
-
 \begin{frame}[fragile]{Other Error Metrics}
 \begin{columns}
 \column{0.65\textwidth}
@@ -295,18 +303,20 @@ scores = cross_val_score(clf, X, y, cv = logo)
   \item {\verb+'recall'+}: How many \% of positive samples were found
 	\item {\verb+'precision'+}: How many \% of found samples were positive
 	\item {\verb+'f1'+}: F$_1$ score; harmonic mean of recall and precision
+	\item {\verb+average_precision+}: Average precision over all detection thresholds.
 \end{itemize}
 \end{itemize}
 }
 \column{0.38\textwidth}
 \begin{lstlisting}
-# Code:
+# Sample Code:
 
 metrics = ['accuracy',
            'roc_auc',
            'recall',
            'precision',
-           'f1']
+           'f1',
+           'average_precision']
 
 for scorer in metrics:
     scores = cross_val_score(clf, 
@@ -322,11 +332,12 @@ for scorer in metrics:
 \begin{lstlisting}
 # Result:
 
-accuracy score: 0.92 +- 0.01
-roc_auc score: 0.98 +- 0.00
-recall score: 0.90 +- 0.03
-precision score: 0.93 +- 0.01
-f1 score: 0.91 +- 0.02
+accuracy score: 0.79 +- 0.04
+roc_auc score: 0.88 +- 0.08
+recall score: 0.82 +- 0.08
+precision score: 0.74 +- 0.04
+f1 score: 0.77 +- 0.05
+average_precision score: 0.84 +- 0.11
 \end{lstlisting}
 \end{columns}
 \end{frame}
@@ -411,12 +422,12 @@ does still not follow the noise patterns.
 \begin{frame}[fragile]{Regularization in Regression}
 \begin{itemize}
 \item Regularization techniques were first assessed in a regression context with linear models.
-\item Linear regression model assumes that the inputs $\x_n\in \R^{P}$ and outputs $\y_n\in \R$ 
+\item Linear regression model assumes that the inputs $\x_n\in \R^{P}$ and outputs $y_n\in \R$ 
 are related as
 \[
 y_n = \w^T\x_n + e_n,
 \]
-where $\e_n\sim {\cal N}(0, \sigma^2)$ is the error term.
+where $e_n\sim {\cal N}(0, \sigma^2)$ is the error term.
 \item With these assumptions, \emph{least squares} returns the optimal solution:
 \[
 \minimize_{\w}\left( \sum_{n = 0}^{N-1} (y_n - \w^T\x_n)^2 \right)
@@ -439,10 +450,10 @@ with $\X = \left[\x_0^T,\x_1^T,\ldots,\x_{N-1}^T\right]^T$.
 \[
 \w_{\text{RIDGE}} = (\X^T\X + \lambda{\bf I})^{-1}\X^T\y.
 \]
-\item Another name is $L_2$ regularization, because we take the $L_2$ norm of the weights.
+\item Another name is $L_2$ regularization, because the penalty takes the $L_2$ norm of the weights.
 \item In general, the $L_q$ norm (for $q>0$) is defined as 
 \[
-\|\w\|_q = \left( |w_0|^q +|w_1|^q + \cdots + |w_{P-1}|^{q} \right)^{-q}
+\|\w\|_q = \left( |w_0|^q +|w_1|^q + \cdots + |w_{P-1}|^{q} \right)^{\frac1q}
 \]
 \item See \verb+sklearn.linear_model.Ridge+.
 \end{itemize}
@@ -455,7 +466,7 @@ with $\X = \left[\x_0^T,\x_1^T,\ldots,\x_{N-1}^T\right]^T$.
 \[
 \minimize_{\w}\left( \sum_{n = 0}^{N-1} (y_n - \w^T\x_n)^2 + \lambda\| \w\|_1 \right),
 \]
-with $\| \w \|_1 = \sum_p |w_p|$.
+with $\| \w \|_1 = \sum\limits_{p=1}^P |w_p|$.
 \item This is called \emph{LASSO penalty}\footnote{(Least Absolute Shrinkage and Selection Operator)}.
 \item With this penalty, there is no closed form expression. 
 \item The minimum is solved iteratively using, \emph{e.g.,} gradient search.
@@ -468,11 +479,11 @@ with $\| \w \|_1 = \sum_p |w_p|$.
 \item The same regularizers apply also for linear classifiers.
 \item \textbf{$L_2$ penalized Logistic Regression}:
 \[
-\text{penalized log-loss} = \sum_{n = 0}^{N-1}\underbrace{ \ln(1 + \exp(y_n\w^T\x_n))}_{\text {log-loss}} + \lambda \underbrace{\w^T\w}_{\text{penalty}}
+\text{penalized log-loss} = \sum_{n = 0}^{N-1}\underbrace{ \ln(1 + \exp(y_n\w^T\x_n))}_{\text {log-loss}} + \lambda \underbrace{\w^T\w}_{L_2 \text{ penalty}}
 \]
 \item \textbf{$L_2$ penalized Linear SVM}:
 \[
-\text{penalized hinge loss} = \sum_{n = 0}^{N-1}\underbrace{ \max(0, 1-y_n\w^T\x_n)}_{\text {hinge loss}} + \lambda \underbrace{\w^T\w}_{\text{penalty}}
+\text{penalized hinge loss} = \sum_{n = 0}^{N-1}\underbrace{ \max(0, 1-y_n\w^T\x_n)}_{\text {hinge loss}} + \lambda \underbrace{\w^T\w}_{L_2 \text{ penalty}}
 \]
 \item The coefficient $\lambda\ge 0$ balances the strength of regularization:
 \begin{itemize}
@@ -484,7 +495,7 @@ with $\| \w \|_1 = \sum_p |w_p|$.
 
 \begin{frame}{$L_1$ Regularization with Linear Classifiers}
 \begin{itemize}
-	\item More recently, research has concentrated around the $L_1$ norm: $\|\w\|_1 = \sum |w_k|$.
+	\item The $L_1$ penalized versions are defined similarly.
 \item \textbf{$L_1$ Regularized Logistic Regression}:
 \[
 \text{penalized log-loss} = \sum_{n = 0}^{N-1}\underbrace{ \ln(1 + \exp(y_n\w^T\x_n))}_{\text {log-loss}} + \lambda \underbrace{\|\w\|_1}_{L_1 \text{ penalty}}
@@ -503,11 +514,11 @@ with $\| \w \|_1 = \sum_p |w_p|$.
 \item Feature selection property can be understood from an alternative formulation of the optimization problem.
 \item The following two problems are equivalent
 \[
-\text{minimize} \sum_{n = 0}^{N-1} \ell(\w) + \lambda \|\w\|_p
+\text{minimize} \left( \sum_{n = 0}^{N-1} \ell(\w) + \lambda \|\w\|_p \right)
 \]
 and
 \[
-\text{minimize} \sum_{n = 0}^{N-1} \ell(\w) \text{ such that } \|\w\|_p \le C
+\text{minimize} \left( \sum_{n = 0}^{N-1} \ell(\w) \right) \text{ such that } \|\w\|_p \le C
 \]
 with $\ell(\w)$ either the log loss or hinge loss and $p\in \{1,2\}$.
 \end{itemize}
@@ -667,7 +678,7 @@ peaks of the mass spectra.
 \begin{itemize}
 \item Consider an example of classifying the \emph{digits} dataset (\verb+sklearn.datasets.load_digits+).
 \item We use LDA classifier with recursive feature elimination.
-\item For simplicity, we consider only two classes (zeros and ones).
+\item For simplicity, we consider only two classes ('8' and '9').
 \end{itemize}
 \begin{lstlisting}
 from sklearn.datasets import load_digits
@@ -696,8 +707,8 @@ mask = rfecv.support_.reshape(8, 8)
 
 \begin{frame}{Results}
 \begin{itemize}
-\item The smallest high scoring set of features consists of 43 pixels.
-\item There are also larger sets with equal score.
+\item The smallest high scoring set of features consists of 36 pixels.
+\item There are also other sets with equal score.
 \item However, using all features will give a lower score.
 \end{itemize}
 \begin{center}
@@ -743,9 +754,8 @@ for C in C_range:
 
 \begin{frame}{Example}
 \begin{itemize}
-\item The smallest high scoring set of features consists of 50 pixels.
+\item The smallest high scoring set of features consists of 21 pixels.
 \item Note: a different set will result at each run due to randomness of CV-5. Also the below set is different from the CV results---trained with all data.
-\item The $L_1$ feature set seems 'better' than RFE.
 \end{itemize}
 \begin{center}
 	\includegraphics[height=0.4\textheight]{L1_digits_accuracy.pdf}
@@ -757,12 +767,13 @@ for C in C_range:
 
 \begin{frame}[fragile]{Randomized LogReg for Feature Selection}
 \begin{itemize}
-\item Basic $L_1$ feature selection has been extended through randomization.
-\item The randomized version iterates by showing subsamples of the training set and observes
+\item The challenge with both methods is the randomness: two runs will result in different features.
+\item Solution: The randomized version iterates by showing subsamples of the training set and observes
 which features get selected consistently.
 \item More robust than normal $L_1$; also called \emph{stability selection}.
-\item See \verb+sklearn.linear_model.RandomizedLogisticRegression+ for classification.
-\item See \verb+sklearn.linear_model.RandomizedLasso+ for regression.
+\item {See \texttt{sklearn.linear}}\verb+_+{\texttt{model.RandomizedLogisticRegression} for classification.}
+\item {See \texttt{sklearn.linear}}\verb+_+{\texttt{model.RandomizedLasso} for regression.}
+\item \textbf{Unfortunately, this method no longer exists in the scikit-learn distribution.}
 \end{itemize}
 \end{frame}
 
@@ -804,7 +815,7 @@ mask = mask.reshape(8,8)
 \column{0.85\textwidth}
 \begin{itemize}
 	\item Often, we are interested in the relative importance of features---not only which where selected, but in which order.
-	\item Random forest derives this by shuffling each feature and studying the effect in accuracy: \verb+RandomForestClassifier.feature_importances:+.
+	\item Random forest derives this by shuffling each feature and studying the effect in accuracy: \verb+RandomForestClassifier.feature_importances_+.
 	\item Randomized Logistic Regression keeps track of how often each feature was selected: \verb+RandomizedLogisticRegression.scores_+.
 	\item Also, the RFECV keeps track of the order in which features were dropped: \verb+RFECV.ranking_+.
 	\item The plots for our data are shown on the right.
@@ -842,12 +853,12 @@ mask = mask.reshape(8,8)
 			\emph{\scriptsize Figure credits: Wikipedia::K-means clustering}
 	  \column{0.4\textwidth}
 		\begin{center}
-			\includegraphics[width=0.5\columnwidth]{kmeans_orig.pdf}
-			\includegraphics[width=0.5\columnwidth]{kmeans_2.pdf}\\
-			\includegraphics[width=0.5\columnwidth]{kmeans_3.pdf}
-			\includegraphics[width=0.5\columnwidth]{kmeans_4.pdf}\\
-			\includegraphics[width=0.5\columnwidth]{kmeans_5.pdf}
-			\includegraphics[width=0.5\columnwidth]{kmeans_true.pdf}
+			\includegraphics[width=0.4\columnwidth]{kmeans_orig.pdf}
+			\includegraphics[width=0.4\columnwidth]{kmeans_2.pdf}\\
+			\includegraphics[width=0.4\columnwidth]{kmeans_3.pdf}
+			\includegraphics[width=0.4\columnwidth]{kmeans_4.pdf}\\
+			\includegraphics[width=0.4\columnwidth]{kmeans_5.pdf}
+			\includegraphics[width=0.4\columnwidth]{kmeans_true.pdf}
 		\end{center}
 		\end{columns}
 \end{frame}
@@ -971,6 +982,38 @@ plt.legend(loc = 'best')
 	  \column{0.3\textwidth}
 		\begin{center}
 			\includegraphics[width=\columnwidth]{digits_pca_proj.pdf}
+		\end{center}
+		\end{columns}
+\end{frame}
+
+\begin{frame}[fragile, allowframebreaks=0.8]{More Recent Dimensionality Reduction Methods}
+		\begin{columns}
+		\column{0.7\textwidth}
+	    \begin{itemize}
+\item After the PCA, there are also more effective methods for dimensionality reduction, \emph{e.g.,} for visualization.
+\item Look at \verb+sklearn.manifold+ for these.
+
+\begin{lstlisting}
+# Example of the T-SNE dimensionality reduction.
+
+from sklearn.manifold import TSNE
+
+tsne = TSNE(n_components=2, init='pca', random_state=0)
+X_tsne = tsne.fit_transform(X)
+
+labels = ['zeros', 'ones', 'twos', 'threes', 'fours', 'fives', 'sixes', 'sevens', 'eights', 'nines']
+
+for k in range(10):
+    plt.scatter(X_tsne[y == k, 0], X_tsne[y == k, 1], label = labels[k])
+
+plt.legend(loc = 'best')
+\end{lstlisting}
+
+\end{itemize}
+			
+	  \column{0.3\textwidth}
+		\begin{center}
+			\includegraphics[width=\columnwidth]{digits_tsne_proj.pdf}
 		\end{center}
 		\end{columns}
 \end{frame}

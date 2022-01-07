@@ -260,30 +260,27 @@ and image analysis (OpenCV) to even a fullblown webserver (Django/Flask)
 \item \textbf{opencv}: Computer vision
 \item \textbf{pandas}: Data analysis
 \item \textbf{statsmodels}: Statistics in Python
-\item \textbf{caffe, theano, tensorflow, \href{http://keras.io/}{keras}}: Deep neural networks (we are using keras later in the course)
-\item \textbf{spyder}: The front end (Scientific PYthon Development EnviRonment)
+\item \textbf{\href{https://www.tensorflow.org/}{Tensorflow}, \href{https://pytorch.org/}{Pytorch}}: Deep learning
+\item \textbf{spyder}: Scientific PYthon Development EnviRonment (editor)
+\item \textbf{VSCode}: Visual Studio Code (another editor)
+\item \textbf{Jupyter}: Interactive notebook environment in browser
 \end{itemize}
 \end{frame}
 
 
 \begin{frame}{Where to get Python?}
 \begin{itemize}
-\item It is possible to construct your custom Python environment by installing
-individual modules (base from \url{python.org} and libraries from, e.g.,
-\url{http://www.lfd.uci.edu/~gohlke/pythonlibs/}).
-\item Alternatively, one may install a full distribution, such as
-\begin{itemize}
-\item Anaconda \url{https://www.continuum.io/downloads} \textbf{$\leftarrow$ my favorite}
-\item Enthought Canopy \url{http://www.enthought.com/}
+\item \url{https://www.anaconda.com/download/} 
 \end{itemize}
-\item ...or in linux:\\
-\noindent\texttt{
-\noindent\hspace*{0.8cm}\# apt-get install python\\
-\hspace*{1cm}\# apt-get install python-numpy\\
-\hspace*{1cm}\# apt-get install python-sklearn\\ 
-\hspace*{1cm}\# apt-get install python-matplotlib\\
-\hspace*{1cm}\# apt-get install spyder
+\item After installing Anaconda, open "Anaconda prompt", and issue the following commands to set up the libraries:
+{\small
+\begin{verbatim}
+>> conda install scikit-learn # Machine learning tools
+>> conda install tensorflow   # Or "tensorflow-gpu" if NVidia GPU
+>> pip install opencv-python  # Computer vision utilities
+\end{verbatim}
 }
+\item Anaconda has also a minimal distribution called \emph{Miniconda}, with which you need to \verb+conda install+ more stuff on your own.
 \end{itemize}
 \end{frame}
 
@@ -312,7 +309,7 @@ later you love it.
 \begin{itemize}
 \item \textbf{The editor and the environment} 
 \begin{itemize}
-\item \emph{Matlab slightly better than Python}
+\item \emph{Matlab more product-like than Python}
 \end{itemize}
 \item \textbf{Linear algebra} 
 \begin{itemize}
@@ -330,12 +327,14 @@ later you love it.
 \end{itemize}
 \end{frame}
 
-\begin{frame}[fragile]{Spyder Editor}
+\begin{frame}[fragile]{Editors}
 \begin{columns}%[onlytextwidth]
 \column{0.44\textwidth}
 \begin{itemize}
 \item In this course we use the \emph{Spyder} editor.
-\item The editor window contains two panes: editor on the left and
+\item Other good editors: \emph{Visual Studio Code}, \emph{PyCharm}. 
+\item Spyder and VSCode come with Anaconda, PyCharm you install on your own. 
+\item Spyder window contains two panes: editor on the left and
 console on the right.
 \item \fbox{F5}: Run code; \fbox{F9}: Run selected region.
 \item Alternatively, you can use whatever editor you like, and run
@@ -580,12 +579,10 @@ array([[ 1.        ,  0.5       ,  0.33333333],
 \column{0.5\textwidth}
 \begin{itemize}
 \item Matrix multiplication is different from Matlab.
-Use \verb+np.dot+ or \verb+np.matmul+.
-\item With NumPy version 1.10+ and Python 3.5+, matrix multiplication can be done
-with the \verb+@+ operator: \verb+A @ B+.
+Use \verb+'@'+ operator or function \verb+np.matmul+.
 \end{itemize}
 \column{0.5\textwidth}
-\begin{lstlisting}
+\begin{lstlisting}[escapeinside={(*}{*)}]
 >>> A = np.array([[1, 2], [3, 4]])
 >>> B = np.array([[5, 6], [7, 8]])
 
@@ -593,7 +590,11 @@ with the \verb+@+ operator: \verb+A @ B+.
 array([[ 5, 12],
        [21, 32]])
 
->>> np.dot(A, B) # Matrix product; alternatively: np.matmul
+>>> A (*@*) B # Matrix product (Python 3.5.2+)
+array([[19, 22],
+       [43, 50]])
+			
+>>> np.dot(A, B) # Functional form; alternatively: np.matmul
 array([[19, 22],
        [43, 50]])
 \end{lstlisting}
@@ -615,7 +616,7 @@ array([[ 0.28382296,  0.90172558,  1.10036663],
 \begin{frame}[fragile]
  {Indexing}
 \begin{itemize}
-\item Indexing of vectors uses the colon notation, too.
+\item Indexing of vectors uses the colon notation.
 \item Below, we extract selected items from the vector \verb+1...10+:
 \begin{lstlisting}
 >>> x = np.arange(1, 11)
@@ -647,6 +648,9 @@ array([ 1,  4,  7, 10])
 \end{itemize}
 \column{0.4\textwidth}
 \begin{lstlisting}
+# Assuming x = np.arange(1, 11):
+>>> x[-1]  # The last item
+10
 >>> x[-3:] # Three last items
 array([ 8,  9, 10])
 >>> x[::-1] # Items in inverse order
@@ -660,7 +664,7 @@ array([10,  9,  8,  7,  6,  5,  4,  3,  2,  1])
 \begin{frame}[fragile,allowframebreaks=0.8]
  {Indexing}
 \begin{itemize}
-\item Also matrices can be indexed similarly. This operation is called \emph{slicing},
+\item Also N-dimensional arrays (\emph{e.g., matrices}) can be indexed similarly. This operation is called \emph{slicing},
 and the result is a \emph{slice} of the matrix.
 \end{itemize}
 \vspace*{-0.2cm}
@@ -668,8 +672,8 @@ and the result is a \emph{slice} of the matrix.
 \hspace*{0.05cm}
 \column{0.6\textwidth}
 \begin{itemize}
-\item Here we request for items on the rows 2:4~=~[2,3] and columns 1,2,4 (shown in red).
-\item Note, that with matrices, the first index is the row; not "x-coordinate".
+\item In the example on the right, we extract items on the rows 2:4~=~[2,3] and columns 1,2,4 (shown in red).
+\item Note: the first index is the row; not "x-coordinate".
 \item This order is called "Fortran style" or "column major" while the alternative is 
 "C~style" or "row major".
 \end{itemize}
@@ -728,37 +732,36 @@ array([[24, 25, 26, 27, 28, 29],
 \begin{itemize}
 \item Higher-dimensional arrays are frequently encountered in machine learning.
 \item For example, a set of 1000 color images of size $w\times h = 128\times96$ is represented
-as a $1000\times 3 \times 96\times 128$ array.
-\item Here, dimensions are: image index, color channel, y-coordinate, x-coordinate.
-\item Sometimes, a shorter name is used: \mbox{"(b, c, 0, 1) order"}.
+as a $1000 \times 96\times 128\times 3$ array.
+\item Here, dimensions are: image index, y-coordinate, x-coordinate, color channel.
 \end{itemize}
 \column{0.35\textwidth}
 \begin{lstlisting}
 # Generate a random "image" array:
->>> A = np.random.rand(1000, 3, 96, 128)
+>>> A = np.random.rand(1000, 96, 128, 3)
 
 # What size is it?
 >>> A.shape
-(1000L, 3L, 96L, 128L)
+(1000L, 96L, 128L, 3L)
 
-# Access the pixel (4, 3) of 2nd color channel 
+# Access the pixel at $x = 3$, $y = 4$ of 2nd color channel 
 # of the 2nd image
->>> A[1, 2, 3, 4]
-0.36569219631994954
+>>> A[1, 4, 3, 2]
+0.9692199423337374
 
-# Request all color channels:
->>> A[1, :, 3, 4]
-array([ 0.32306666,  0.60012626,  0.3656922 ])
+# Request all color channels at that location:
+>>> A[1, 4, 3, :]
+array([0.19971581, 0.30404188, 0.96921994])
 
-# Request a complete 96x128 color channel:
->>> A[1, 2, :, :]
-array([[ 0.19102217 ...
- 0.88464718]])
+# Request a complete 96x128 image:
+>>> A[1, :, :, :]
+array([[[0.40978563, 0.86893457, 0.30702007], ...
+0.81794195]]])
 
 # Equivalent shorter notation:
->>> A[1, 2, ...]
-array([[ 0.19102217 ...
- 0.88464718]])
+>>> A[1, ...]
+array([[[0.40978563, 0.86893457, 0.30702007], ...
+0.81794195]]])
 \end{lstlisting}
 \end{columns}
 \end{frame}
@@ -866,7 +869,8 @@ Python lists are actual lists, so appending is fine.
 \item We will write file reading code from scratch.
 \item Alternatively, many modules contain csv-reading functions
 \begin{itemize}
-\item \verb+numpy.loadtxt+ or \verb+numpy.genfromtxt+
+\item \verb+numpy.loadtxt+
+\item \verb+numpy.genfromtxt+
 \item \verb+csv.reader+
 \item \verb+pandas.read_csv+
 \end{itemize}

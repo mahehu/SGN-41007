@@ -92,9 +92,9 @@
 \title{Pattern Recognition and Machine Learning}
 \subtitle{Slide Set 3: Detection Theory}
 \author{Heikki Huttunen\\
-heikki.huttunen@tut.fi}
-\institute{Department of Signal Processing\\Tampere University of Technology}
-\date{January 2017}
+heikki.huttunen@tuni.fi}
+\institute{Signal Processing\\Tampere University}
+\date{October 2020}
 
 \begin{document}
 
@@ -161,13 +161,18 @@ consists of noise only and is called \emph{null hypothesis}.
 \begin{frame}[allowframebreaks=0.8]
  {Introductory Example}
 \begin{itemize}
-\item \emph{Neyman-Pearson approach} is the classical way of solving 
-detection problems in an optimal manner. 
-\item It relies on so called \emph{Neyman-Pearson theorem}.
-\item Before stating the theorem, consider a simplistic detection
+%\item \emph{Neyman-Pearson approach} is the classical way of solving 
+%detection problems in an optimal manner. 
+%\item It relies on so called \emph{Neyman-Pearson theorem}.
+\item Consider a simplistic detection
 problem, where we observe one sample $x[0]$ from one of two
 densities: ${\cal N}(0,1)$ or ${\cal N}(1,1)$. 
 \item The task is to choose the correct density in an optimal manner.
+
+
+\centerline{\includegraphics[width=0.6\textwidth]{two_gaussians.pdf}}
+\eject
+
 \item Our hypotheses are now
 \begin{align*}
 {\cal H}_1 &: \mu = 1,\\
@@ -176,7 +181,7 @@ densities: ${\cal N}(0,1)$ or ${\cal N}(1,1)$.
 and the corresponding likelihoods are plotted below.
 
 \end{itemize}
-\centerline{\includegraphics[width=0.6\textwidth]{NeymanPearson.pdf}}
+\centerline{\includegraphics[width=0.5\textwidth]{NeymanPearson.pdf}}
 
 \begin{itemize}
 
@@ -185,8 +190,8 @@ the one, which is higher for a particular $x[0]$.
 \item More specifically, study the likelihoods and choose the more likely one.
 \item The likelihoods are
 \begin{align*}
-{\cal H}_1 &: p(x[0]\mid \mu=1) =  \frac{1}{\sqrt{2\pi}}\exp\left(-\frac{(x[n]-1)^2}{2}\right).\\
-{\cal H}_0 &: p(x[0]\mid \mu=0) =  \frac{1}{\sqrt{2\pi}}\exp\left(-\frac{(x[n])^2}{2}\right).
+{\cal H}_1 &: p(x[0]\mid \mu=1) =  \frac{1}{\sqrt{2\pi}}\exp\left(-\frac{(x[0]-1)^2}{2}\right).\\
+{\cal H}_0 &: p(x[0]\mid \mu=0) =  \frac{1}{\sqrt{2\pi}}\exp\left(-\frac{(x[0])^2}{2}\right).
 \end{align*}
 \item One should select ${\cal H}_1$ if "$\mu = 1$" is more likely than "$\mu = 0$".
 \item In other words, $p(x[0]\mid \mu=1) > p(x[0]\mid \mu=0)$.
@@ -194,26 +199,29 @@ the one, which is higher for a particular $x[0]$.
 \begin{align*}
 &\; p(x[0]\mid \mu=1) > p(x[0]\mid \mu=0) \\
 \Leftrightarrow &\; \frac{p(x[0]\mid \mu=1)}{p(x[0]\mid \mu=0)} > 1\\
-\Leftrightarrow &\; \frac{\frac{1}{\sqrt{2\pi}}\exp\left(-\frac{(x[n]-1)^2}{2}\right)}{\frac{1}{\sqrt{2\pi}}\exp\left(-\frac{(x[n])^2}{2}\right)} > 1\\
-\Leftrightarrow &\; \exp\left(-\frac{(x[n]-1)^2 - x[n]^2}{2}\right) > 1
+\Leftrightarrow &\; \frac{\frac{1}{\sqrt{2\pi}}\exp\left(-\frac{(x[0]-1)^2}{2}\right)}{\frac{1}{\sqrt{2\pi}}\exp\left(-\frac{(x[0])^2}{2}\right)} > 1\\
+\Leftrightarrow &\; \exp\left(-\frac{(x[0]-1)^2 - x[0]^2}{2}\right) > 1
 \end{align*}
 \framebreak
 \begin{align*}
-\Leftrightarrow &\; (x[n]^2 - (x[n]-1)^2) > 0\\
-\Leftrightarrow &\; 2x[n] - 1 > 0\\
-\Leftrightarrow &\; x[n] > \frac12.
+\Leftrightarrow &\; (x[0]^2 - (x[0]-1)^2) > 0\\
+\Leftrightarrow &\; 2x[0] - 1 > 0\\
+\Leftrightarrow &\; x[0] > \frac12.
 \end{align*}
 
 \item In other words, choose ${\cal H}_1$ if $x[0] > 0.5$ and ${\cal H}_0$ if
 $x[0] < 0.5$.
 
-\item Studying the ratio of likelihoods on the second row of the derivation 
-is the key. 
+\item Studying the ratio of likelihoods (second row of the previous derivation)
+is the key:
+\[
+\frac{p(x[0]\mid \mu=1)}{p(x[0]\mid \mu=0)} > 1
+\]
 
 \item This ratio is called \emph{likelihood ratio}, and comparison
-to a threshold $\gamma$ (here $\gamma = 1$) is called \emph{likelihood ratio test} (LRT).
+to a threshold (here $\gamma = 1$) is called \emph{likelihood ratio test} (LRT).
 
-\item Of course the threshold $\gamma$ may be chosen other than $\gamma = 1$.
+\item Of course the \textit{detection threshold} $\gamma$ may be chosen other than $\gamma = 1$.
 
 %\item Note, that it is also possible to study posterior probability ratios
 %$p({\cal H}_1\mid \x) / p({\cal H}_0\mid \x)$ instead of the above likelihood
@@ -227,17 +235,17 @@ to a threshold $\gamma$ (here $\gamma = 1$) is called \emph{likelihood ratio tes
 \end{itemize}
 \end{frame}
 
-\begin{frame}[allowframebreaks=0.8]
- {Error Types}
-\begin{itemize}
-\item It might be that the detection problem is not symmetric and some
-errors are more costly than others.
-\item For example, when detecting a disease, a missed detection is more
-costly than a false alarm. 
-\item The tradeoff between misses and false alarms can be adjusted
-using the threshold of the LRT.
-\end{itemize}
-\end{frame}
+%\begin{frame}[allowframebreaks=0.8]
+% {Error Types}
+%\begin{itemize}
+%\item It might be that the detection problem is not symmetric and some
+%errors are more costly than others.
+%\item For example, when detecting a disease, a missed detection is more
+%costly than a false alarm. 
+%\item The tradeoff between misses and false alarms can be adjusted
+%using the threshold of the LRT.
+%\end{itemize}
+%\end{frame}
 
 \begin{frame}[allowframebreaks=0.8]
  {Error Types}
@@ -266,84 +274,97 @@ by adjusting the detection threshold.
 
 \begin{frame}[allowframebreaks=0.8]
  {Error Types}
+\begin{center}
+\includegraphics[width=10cm]{error_types.png}
+\end{center}
+{\tiny
 \begin{itemize}
-{\small
-\item Both probabilities can be calculated.
-\item Probability of false alarm for the threshold $\gamma = 1.5$ is
-\[
-P_{FA} = P(x[0]>\gamma \mid \mu = 0) = \int_{1.5}^{\infty} \frac{1}{\sqrt{2\pi}}\exp\left(-\frac{(x[n])^2}{2}\right)\,dx[n]\approx 0.0668.
-\]
-\item Probability of missed detection is
-\[
-\hspace*{-0.7cm}
-P_{M} = P(x[0]<\gamma \mid \mu = 1) = \int_{-\infty}^{1.5} \frac{1}{\sqrt{2\pi}}\exp\left(-\frac{(x[n]-1)^2}{2}\right)\,dx[n] \approx 0.6915.
-\]
-\item An equivalent, but more useful term is the complement of $P_M$: probability of detection:
-\[
-P_{D} = 1 - P_M = \int_{1.5}^{\infty} \frac{1}{\sqrt{2\pi}}\exp\left(-\frac{(x[n]-1)^2}{2}\right)\,dx[n] \approx 0.3085.
-\]
+\item Picture from \url{https://en.wikipedia.org/wiki/Precision_and_recall}
+\end{itemize}
 }
-\end{itemize}
 \end{frame}
 
-\begin{frame}[allowframebreaks=0.8]
- {Neyman-Pearson Theorem}
-\begin{itemize}
-\item Since $P_{FA}$ and $P_D$ depend on each other, we would like to maximize
-$P_D$ subject to given maximum allowed $P_{FA}$. Luckily the following theorem makes this easy.
-\item \textbf{Neyman-Pearson Theorem:} For a fixed $P_{FA}$, the likelihood ratio test
-maximizes $P_D$ with the decision rule
-\[
-L(\x) = \frac{p(\x; {\cal H}_1)}{p(\x; {\cal H}_0)} > \gamma,
-\]
-with threshold $\gamma$ is the value for which
-\[
-\int_{\x:L(\x)>\gamma} p(\x; {\cal H}_0)\, d\x = P_{FA}.
-\]
-\framebreak
+%\begin{frame}[allowframebreaks=0.8]
+% {Error Types}
+%\begin{itemize}
+%{\small
+%\item For example, suppose the threshold is $\gamma = 1.5$. What are $P_{FA}$ and $P_D$?
+%\item Probability of false alarm is found by integrating over the blue area:
+%\[
+%P_{FA} = P(x[0]>\gamma \mid \mu = 0) = \int_{1.5}^{\infty} \frac{1}{\sqrt{2\pi}}\exp\left(-\frac{(x[0])^2}{2}\right)\,dx[0]\approx 0.0668.
+%\]
+%\item Probability of missed detection is the area marked in red:
+%\[
+%\hspace*{-0.7cm}
+%P_{M} = P(x[0]<\gamma \mid \mu = 1) = \int_{-\infty}^{1.5} \frac{1}{\sqrt{2\pi}}\exp\left(-\frac{(x[0]-1)^2}{2}\right)\,dx[0] \approx 0.6915.
+%\]
+%\item An equivalent, but more useful term is the complement of $P_M$: probability of detection:
+%\[
+%P_{D} = 1 - P_M = \int_{1.5}^{\infty} \frac{1}{\sqrt{2\pi}}\exp\left(-\frac{(x[0]-1)^2}{2}\right)\,dx[0] \approx 0.3085.
+%\]
+%}
+%\end{itemize}
+%\end{frame}
 
-\item As an example, suppose we want to find the best detector for our
-introductory example, and we can tolerate 10\% false alarms ($P_{FA} = 0.1$).
-\item According to the theorem, the detection rule is:
-\[
-\text{Select } {\cal H}_1 \text{ if } \frac{p(x\mid \mu=1)}{p(x\mid \mu=0)} > \gamma
-\]
-The only thing to find out now is the threshold $\gamma$ such that
-\[
-\int_{\gamma}^{\infty} p(x\mid \mu=0)\, dx = 0.1.
-\]
-
-\end{itemize}
-\end{frame}
-
-\begin{frame}[allowframebreaks=0.8,fragile]
- {Neyman-Pearson Theorem}
-
-\begin{itemize}
-\item This can be done with Python function \texttt{isf}, which solves
-the inverse cumulative distribution function.
-
-\begin{lstlisting}
->>> import scipy.stats as stats
-
->>> # Compute threshold such that P_FA = 0.1
->>> T = stats.norm.isf(0.1, loc = 0, scale = 1)
->>> print T
-1.28155156554
-\end{lstlisting}
-
-\item The parameters \verb+loc+ and \verb+scale+ are the mean and standard
-deviation of the Gaussian density, respectively.
-
-\end{itemize}
-
-\end{frame}
+%\begin{frame}[allowframebreaks=0.8]
+% {Choosing the threshold}
+%\begin{itemize}
+%%\item Since $P_{FA}$ and $P_D$ depend on each other, we would like to maximize
+%%$P_D$ subject to given maximum allowed $P_{FA}$. Luckily the following theorem makes this easy.
+%%\item \textbf{Neyman-Pearson Theorem:} For a fixed $P_{FA}$, the likelihood ratio test
+%%maximizes $P_D$ with the decision rule
+%%\[
+%%L(\x) = \frac{p(\x; {\cal H}_1)}{p(\x; {\cal H}_0)} > \gamma,
+%%\]
+%%with threshold $\gamma$ is the value for which
+%%\[
+%%\int_{\x:L(\x)>\gamma} p(\x; {\cal H}_0)\, d\x = P_{FA}.
+%%\]
+%%\framebreak
+%%
+%\item Often we don't want to define the threshold, but rather the amount of false alarms we can accept.
+%\item For example, suppose we want to find the best detector for our
+%introductory example, and we can tolerate 10\% false alarms ($P_{FA} = 0.1$).
+%\item The likelihood ratio detection rule is:
+%\[
+%\text{Select } {\cal H}_1 \text{ if } \frac{p(x\mid \mu=1)}{p(x\mid \mu=0)} > \gamma
+%\]
+%The only thing to find out now is the threshold $\gamma$ such that
+%\[
+%\int_{\gamma}^{\infty} p(x\mid \mu=0)\, dx = 0.1.
+%\]
+%
+%\end{itemize}
+%\end{frame}
+%
+%\begin{frame}[allowframebreaks=0.8,fragile]
+% {Choosing the threshold}
+%
+%\begin{itemize}
+%\item This can be done with Python function \texttt{isf}, which solves
+%the inverse cumulative distribution function.
+%
+%\begin{lstlisting}
+%>>> import scipy.stats as stats
+%
+%>>> # Compute threshold such that P_FA = 0.1
+%>>> T = stats.norm.isf(0.1, loc = 0, scale = 1)
+%>>> print T
+%1.28155156554
+%\end{lstlisting}
+%
+%\item The parameters \verb+loc+ and \verb+scale+ are the mean and standard
+%deviation of the Gaussian density, respectively.
+%
+%\end{itemize}
+%
+%\end{frame}
 
 \begin{frame}[allowframebreaks=0.8]
  {Detector for a known waveform}
 \begin{itemize}
 
-\item The NP approach applies to all cases where likelihoods are available.
+%\item The NP approach applies to all cases where likelihoods are available.
 \item An important special case is that of a known waveform $s[n]$ embedded in WGN sequence $w[n]$:
 \begin{align*}
 {\cal H}_1 &: x[n] = s[n] + w[n] \\
@@ -352,6 +373,8 @@ deviation of the Gaussian density, respectively.
 \item An example of a case where the waveform is known could be detection of radar 
 signals, where a pulse $s[n]$ transmitted by us is reflected back after some 
 propagation time.
+
+\centerline{\includegraphics[width=0.4\textwidth]{clean_sinusoid.pdf} \quad \includegraphics[width=0.4\textwidth]{noisy_sinusoid.pdf}}
 
 \framebreak
 
@@ -388,16 +411,17 @@ final decision rule
 \end{frame}
 
 \begin{frame}[allowframebreaks=0.8]
- {Examples}
+ {Example}
+ 
 \begin{itemize}
-\item This leads into some rather obvious results.
-\item The detector for a known DC level in WGN is
-\[
- \sum_{n=0}^{N-1}x[n] A  > \gamma \Rightarrow A \sum_{n=0}^{N-1}x[n] > \gamma
-\]
-Equally well we can set a new threshold and call it $\gamma' = \gamma / (AN)$.
-This way the detection rule becomes: $\bar{x} > \gamma'$. Note that a negative $A$
-would invert the inequality.
+%\item This leads into some rather obvious results.
+%\item The detector for a known DC level in WGN is
+%\[
+ %\sum_{n=0}^{N-1}x[n] A  > \gamma \Rightarrow A \sum_{n=0}^{N-1}x[n] > \gamma
+%\]
+%Equally well we can set a new threshold and call it $\gamma' = \gamma / (AN)$.
+%This way the detection rule becomes: $\bar{x} > \gamma'$. Note that a negative $A$
+%would invert the inequality.
 \item The detector for a sinusoid in WGN is
 {\small
 \[
@@ -412,13 +436,23 @@ would invert the inequality.
 \item In other words, we check the correlation with the sinusoid. Note that the
 amplitude $A$ does not affect our statistic, only the threshold which is
 anyway selected according to the fixed $P_{FA}$ rate.
-\framebreak
-\item As an example, the below picture shows the detection process with $\sigma = 0.5$.
+\end{itemize}
+\end{frame}
 
+\begin{frame}[fragile]{Example}
+\begin{columns}
+\column{0.5\textwidth}
+
+\begin{itemize}
+
+\item As an example, the  picture shows the detection process with $\sigma = 0.5$.
+\item Note, that we apply the detector with a sliding window; \textit{i.e.,} we perform the hypothesis test at every window of length 100.
 
 \end{itemize}
-\centerline{\includegraphics[width=0.5\textwidth]{sinusoidDetection.pdf}}
 
+\column{0.5\textwidth}
+\centerline{\includegraphics[width=\textwidth]{sinusoidDetection.pdf}}
+\end{columns}
 \end{frame}
 
 \begin{frame}[allowframebreaks=0.8]
@@ -474,8 +508,11 @@ y = np.abs(np.convolve(h, xn, 'same'))
 \centerline{\includegraphics[width=0.65\textwidth]{rayleighSinusoid.pdf}}
 \end{frame}
 
-\begin{frame}[allowframebreaks=0.8]
+
+
+\begin{frame}[fragile,allowframebreaks=0.8]
  {Receiver Operating Characteristics}
+
 \begin{itemize}
 \item A usual way of illustrating the detector performance is the
 \emph{Receiver Operating Characteristics} curve (ROC curve).
@@ -483,6 +520,16 @@ y = np.abs(np.convolve(h, xn, 'same'))
 for all possible values of the threshold $\gamma$.
 \item The functional relationship between $P_{FA}$ and $P_D$
 depends on the problem and the selected detector.
+\end{itemize}
+\end{frame}
+
+
+
+\begin{frame}[fragile,allowframebreaks=0.8]
+ {Receiver Operating Characteristics}
+\begin{columns}
+\column{0.65\textwidth}
+\begin{itemize}
 \item For example, in the DC level example, 
 \begin{align*}
 P_D(\gamma) = \int_{\gamma}^{\infty} \frac{1}{\sqrt{2\pi}}\exp\left(-\frac{(x-1)^2}{2}\right)\,dx\\
@@ -492,16 +539,24 @@ P_{FA}(\gamma) = \int_{\gamma}^{\infty} \frac{1}{\sqrt{2\pi}}\exp\left(-\frac{x^
 \[
 P_D(\gamma) = \int_{\gamma-1}^{\infty} \frac{1}{\sqrt{2\pi}}\exp\left(-\frac{x^2}{2}\right)\,dx = P_{FA}(\gamma-1).
 \]
-\item Plotting the ROC curve for all $\gamma$ results in the following
-curve.
-
+\item Plotting the ROC curve for all $\gamma$ is shown on the right.
 \end{itemize}
-\centerline{\includegraphics[width=0.4\textwidth]{RocCurve.pdf}}
 
+\column{0.35\textwidth}
+\centerline{\includegraphics[width=\textwidth]{RocCurve.pdf}}
+
+\end{columns}
+%\centerline{\includegraphics[width=0.5\textwidth]{roc_difficulty.pdf}}
+
+%\centerline{\includegraphics[width=0.5\textwidth]{RocCurve2.pdf}}
 \end{frame}
 
-\begin{frame}[allowframebreaks=0.8]
+
+\begin{frame}[fragile,allowframebreaks=0.8]
  {Receiver Operating Characteristics}
+\begin{columns}
+\column{0.65\textwidth}
+
 \begin{itemize}
 \item The higher the ROC curve, the better the performance. 
 \item A random guess has diagonal ROC curve.
@@ -509,12 +564,18 @@ curve.
 performance: the \emph{Area Under (ROC) Curve}, or AUC criterion.
 \item The benefit of AUC is that it is threshold independent, and tests
 the accuracy for \textit{all} thresholds.
-\item In the DC level case, the performance increases if the noise variance $\sigma^2$ decreases (since the 
-problem becomes easier).
-\item Below are the ROC plots for various values of $\sigma^2$.
-
+%\item In the DC level case, the performance increases if the noise variance $\sigma^2$ decreases (since the 
+%problem becomes easier).
+%\item Below are the ROC plots for various values of $\sigma^2$.
 \end{itemize}
-\centerline{\includegraphics[width=0.5\textwidth]{RocCurve2.pdf}}
+
+\column{0.35\textwidth}
+\centerline{\includegraphics[width=\textwidth]{roc_difficulty.pdf}}
+
+\end{columns}
+%\centerline{\includegraphics[width=0.5\textwidth]{roc_difficulty.pdf}}
+
+%\centerline{\includegraphics[width=0.5\textwidth]{RocCurve2.pdf}}
 \end{frame}
 
 \begin{frame}[allowframebreaks=0.8]

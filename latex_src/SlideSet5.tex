@@ -90,11 +90,11 @@
 }
 
 \title{Pattern Recognition and Machine Learning}
-\subtitle{Slide Set 5: Ensemble Methods}
+\subtitle{Slide Set 7: Random forests and ensemble methods}
 \author{Heikki Huttunen\\
-heikki.huttunen@tut.fi}
-\institute{Department of Signal Processing\\Tampere University of Technology}
-\date{January 2017}
+heikki.huttunen@tuni.fi}
+\institute{Signal Processing\\Tampere University}
+\date{November 2020}
 
 \begin{document}
 
@@ -116,6 +116,9 @@ heikki.huttunen@tut.fi}
 }
 
 \lstset{language=Python,style=mystyle} 
+
+
+
 
 \begin{frame}
 \vspace*{2cm}
@@ -329,7 +332,7 @@ weak classifiers,
 	tree are randomized, but also the growing of individual trees is random.
 	\item In particular the \emph{split point}
 	\emph{i.e.,} the thresholds of comparisons like $X[1] <= -2.7025$ is randomized (see 
-	the graph of a decision tree at an earlier slide.
+	the graph of a decision tree at an earlier slide).
 
 \item Implemented as \texttt{sklearn.ensemble.ExtraTreesClassifier}.
 

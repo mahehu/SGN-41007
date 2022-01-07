@@ -55,6 +55,7 @@
 \newcommand{\X}{{\bf X}}
 \newcommand{\x}{{\bf x}}
 \newcommand{\y}{{\bf y}}
+\newcommand{\z}{{\bf z}}
 \newcommand{\p}{{\bf p}}
 \newcommand{\E}{{\bf E}}
 \newcommand{\U}{{\bf U}}
@@ -92,9 +93,9 @@
 \title{Pattern Recognition and Machine Learning}
 \subtitle{Slide Set 6: Neural Networks and Deep Learning}
 \author{Heikki Huttunen\\
-heikki.huttunen@tut.fi}
-\institute{Department of Signal Processing\\Tampere University of Technology}
-\date{February 2017}
+heikki.huttunen@tuni.fi}
+\institute{Signal Processing\\Tampere University}
+\date{November 2019}
 
 \begin{document}
 
@@ -158,7 +159,7 @@ heikki.huttunen@tut.fi}
 	\column{0.7\textwidth}
 	\begin{itemize}
 		\item Earlier, there was a lot of emphasis on training algorithms: \emph{conjugate gradient, Levenberg-Marquardt, etc.}
-		\item Today, people mostly use \emph{stochastic gradient descent}.
+		\item Today, the optimizers are less mathematical: \emph{stochastic gradient descent}, \emph{RMSProp}, \emph{Adam}.
 	\end{itemize}
 	\centerline{\includegraphics[width=0.5\textwidth]{nn_toolbox_training_error.png}}
 \column{0.3\textwidth}
@@ -208,57 +209,60 @@ heikki.huttunen@tut.fi}
 \end{frame}
 
 
+
 \begin{frame}{Neural Network Software}
-	\begin{itemize}
-\item Several packages exist:
 \begin{itemize}
-\item \textbf{Matlab NN Toolbox}: Obsolete. 
-	\item \textbf{Caffe}: C++ / CUDA with Python and Matlab interfaces
-\item \textbf{Theano}: Python based CUDA engine; several front ends available: e.g., \textbf{Keras} and Lasagne.
-\item \textbf{Torch}: Library implemented in Lua language (Facebook). Also pyTorch interface exists since Jan 2017.
-\item \textbf{TensorFlow}: Google deep learning engine. Open sourced in Nov 2015. Supported by \textbf{Keras}, which will be the default interface.
-\item Others: VELES (Samsung), Minerva,...
-\item Most use Nvidia \textbf{cuDNN} middle layer.
-\end{itemize}
-\item The important ones:
+\item \textbf{TensorFlow}: Google deep learning engine. Open sourced in Nov 2015. 
 \begin{itemize}
-\item \textbf{Caffe} is very fast and default in image recognition. Good Python and Matlab interface.
-\item \textbf{Torch} has a large user base and lot of momentum from Facebook.
-\item \textbf{Keras} is very flexible and readable full-python interface to Theano and Tensorflow.	\textbf{This is our choice for this course.}
-\item \url{http://keras.io/} and \url{https://github.com/fchollet/keras}
+\item Supported by \textbf{Keras}, which is integrated to TF since TF version 2.0.
 \end{itemize}
+\item \textbf{MS Cognitive TK (CNTK)}: Microsoft deep learning engine. 
+\begin{itemize}
+\item Supported by \textbf{Keras}
+\end{itemize}
+\item \textbf{mxnet}: Scalable deep learning (e.g. Android). First in multi-gpu. Many contributors. 
+\begin{itemize}
+\item Supported by \textbf{Keras} (in beta).
+\end{itemize}
+\item \textbf{PlaidML}: OpenCL backend. Supported by \textbf{Keras}.
+\begin{itemize}
+\item Supported by \textbf{Keras}
+\end{itemize}
+\item \textbf{Torch}: Library implemented in Lua language (Facebook). Python interface via pyTorch.
+\end{itemize}
+\begin{itemize}
+\item All but PlaidML use Nvidia \textbf{cuDNN} middle layer.
 \end{itemize}
 \end{frame}
 
-\begin{frame}[fragile]{Current Trends}
-\begin{itemize}
-	\item Python has become the language of machine learning.
-\end{itemize}
-\centering
-\includegraphics[width=0.3\textwidth]{images/dl-frameworks.png}\quad
-\includegraphics[width=0.3\textwidth]{images/keras-tf.png}\quad
-\includegraphics[width=0.3\textwidth]{images/pytorch.png}
+
+\begin{frame}[fragile]{Popularity of deep learning platforms}
+\begin{center}
+\includegraphics[width=0.45\textwidth]{deeplearning_issues}
+\qquad\includegraphics[width=0.45\textwidth]{popularity}\\
+\hspace*{7cm}\emph{\scriptsize Credits: Jeff Hale / TowardsDataScience}
+\end{center}
 \end{frame}
+
 
 \begin{frame}[fragile]{Train a 2-layer Network with Keras}
 \begin{columns}
 \column{0.6\textwidth}
 \begin{lstlisting}
 # Training code:
-from keras.models import Sequential
-from keras.layers.core import Dense, Activation
+import tensorflow as tf
 
 # First we initialize the model. "Sequential" means there are no loops.
-clf = Sequential()
+clf = tf.keras.models.Sequential()
 
 # Add layers one at the time. Each with 100 nodes.
-clf.add(Dense(100, input_dim=2, activation = 'sigmoid'))
-clf.add(Dense(100, activation = 'sigmoid'))
-clf.add(Dense(1, activation = 'sigmoid'))
+clf.add(tf.keras.layers.Dense(100, input_dim=2, activation = 'sigmoid'))
+clf.add(tf.keras.layers.Dense(100, activation = 'sigmoid'))
+clf.add(tf.keras.layers.Dense(1, activation = 'sigmoid'))
 
 # The code is compiled to CUDA or C++
 clf.compile(loss='mean_squared_error', optimizer='sgd')
-clf.fit(X, y, nb_epoch=20, batch_size=16) # takes a few seconds
+clf.fit(X, y, epochs = 20, batch_size = 16) # takes a few seconds
 \end{lstlisting}
 \begin{lstlisting}
 # Testing code:
@@ -295,13 +299,11 @@ array([[ True],
 		\item There were two key problems why network depth did not increase beyond 2-3 layers:
 		\begin{enumerate}
 			\item The error has huge \textbf{local minima areas} when the net becomes deep: Training gets stuck at one of them.
-			\item The \textbf{gradient vanishes} at the bottom layers: The logistic activation function tends to decrease the gradient magnitude at each layer;
-			eventually the gradient at the bottom layer is very small and they will not train at all.
+			\item The \textbf{gradient vanishes} at the bottom layers: The logistic activation function tends to decrease the gradient magnitude at each layer; eventually the gradient at the bottom layer is very small and they will not train at all.
 		\end{enumerate}
-		\item The former problem was corrected by \textbf{unsupervised} pretraining:
+		\item 10 years ago, it was discovered that both problems could be corrected by \textbf{unsupervised} pretraining:
 		\begin{itemize}
-			\item Train
-		layered models that learned to \emph{represent} the data (no class labels, no classification, just
+			\item Train layered models that learned to \emph{represent} the data (no class labels, no classification, just
 		try to learn to reproduce the data).
 		\item Initialize the network with the weights of the unsupervised model and train in a supervised setting.
 		\item Common tools: \emph{restricted Boltzmann machine} (RBM), \emph{deep belief network} (DBN), 
@@ -327,7 +329,7 @@ array([[ True],
 		\end{itemize}
 		\end{itemize}
 \column{0.2\textwidth}
-\hspace*{-2cm}\includegraphics[width=\columnwidth]{images/ReLU.pdf}
+\hspace*{-2cm}\includegraphics[width=\columnwidth]{images/relu.pdf}
 \end{columns}
 \end{frame}
 
@@ -349,7 +351,7 @@ array([[ True],
 	\begin{itemize}
 		\item 	The typical structure of a convolutional network repeats the following elements:
 		
-			 \fbox{\textbf{convolution}} $\Rightarrow$ \fbox{\textbf{ReLU}} $\Rightarrow$ \fbox{\textbf{subsampling}}
+			 \fbox{\textbf{convolution}} $\Rightarrow$ \fbox{\textbf{nonlinearity}} $\Rightarrow$ \fbox{\textbf{subsampling}}
 			
 		\begin{enumerate}
 	
@@ -358,9 +360,9 @@ array([[ True],
 	\begin{itemize}
 		\item The results are called \textbf{feature maps}, and there are typically a few dozen of those.
 	\end{itemize}
-	\item \textbf{ReLU} passes the feature maps through a pixelwise ReLU. 
+	\item \textbf{ReLU} passes the feature maps through a pixelwise \textit{Rectified Linear Unit}.
 	\begin{itemize}
-		\item In numpy: \verb+y = numpy.maximum(x, 0)+.
+		\item ReLU$(x)=\max(0,x)$.
 			\end{itemize}
 	\item \textbf{Subsampling} shrinks the input dimensions by an integer factor.
 	\begin{itemize}
@@ -374,14 +376,11 @@ array([[ True],
 %	\centering
 %	\includegraphics[width=0.8\textwidth]{ConvMaps.pdf}
 
-\end{frame}
 
-
-\begin{frame}{Convolutional Network}
-
-\centerline{\includegraphics[width=0.8\textwidth]{ConvNet_karpanen.pdf}}
+\centerline{\includegraphics[width=0.8\textwidth]{Age_Network_visualization_detailed.pdf}}
 
 \end{frame}
+
 
 \begin{frame}[fragile]{Convolutional Network: Example}
 \begin{columns}
@@ -414,16 +413,29 @@ array([[ True],
 \begin{columns}
 \column{0.47\textwidth}
 \begin{lstlisting}
-# Training code (modified from mnist_cnn.py at Keras examples)
-from keras.datasets import mnist
-from keras.models import Sequential
-from keras.layers.core import Dense, Dropout, Activation, Flatten
-from keras.layers.convolutional import Convolution2D, MaxPooling2D
+# Training code
+
+from tensorflow.keras.datasets import mnist
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import Dense, Activation, Flatten, Conv2D, MaxPooling2D
+from tensorflow.keras.utils import to_categorical
+import numpy as np
+import os
 
 # We use the handwritten digit database "MNIST".
-# 60000 training and 10000 test images of 
+# 60000 training and 10000 test images of
 # size 28x28
 (X_train, y_train), (X_test, y_test) = mnist.load_data()
+
+# Keras assumes 4D input, but MNIST is lacking color channel.
+# -> Add a dummy dimension at the end.
+
+X_train = X_train[..., np.newaxis] / 255.0
+X_test  = X_test[..., np.newaxis] / 255.0
+
+# Output has to be one-hot-encoded
+y_train = to_categorical(y_train)
+y_test  = to_categorical(y_test)
 
 num_featmaps = 32   # This many filters per layer
 num_classes = 10    # Digits 0,1,...,9
@@ -436,68 +448,67 @@ w, h = 5, 5         # Conv window size
 model = Sequential()
 
 # Layer 1: needs input_shape as well.
-model.add(Convolution2D(num_featmaps, w, h,
-          input_shape=(1, 28, 28), 
+model.add(Conv2D(num_featmaps, (w, h),
+          input_shape=(28, 28, 1),
           activation = 'relu'))
 
 # Layer 2:
-model.add(Convolution2D(num_featmaps, w, h, activation = 'relu'))
+model.add(Conv2D(num_featmaps, (w, h), activation = 'relu'))
 model.add(MaxPooling2D(pool_size=(2, 2)))
-model.add(Dropout(0.25))
 
 # Layer 3: dense layer with 128 nodes
 # Flatten() vectorizes the data:
-# 32x10x10 -> 3200 
+# 32x10x10 -> 3200
 # (10x10 instead of 14x14 due to border effect)
-model.add(Flatten()) 
+model.add(Flatten())
 model.add(Dense(128, activation = 'relu'))
-model.add(Dropout(0.5))
 
 # Layer 4: Last layer producing 10 outputs.
 model.add(Dense(num_classes, activation='softmax'))
 
 # Compile and train
-model.compile(loss='categorical_crossentropy', optimizer='adadelta')
-model.fit(X_train, Y_train, nb_epoch=100)
+model.compile(loss='categorical_crossentropy',
+              optimizer='adam',
+              metrics = ['accuracy'])
+
+model.fit(X_train, y_train, epochs = 10,
+          validation_data = (X_test, y_test))
 \end{lstlisting}
 \end{columns}
 \end{frame}
 
 \begin{frame}[fragile]{Convolutional Network: Training Log}
 \begin{itemize}
-	\item The code runs for about 5-10 minutes on a GPU.
-	\item On a CPU, this would take 1-2 hours (1 epoch $\approx$ 500 s)
+	\item The code runs for about a minute on a GPU.
+	\item On a CPU, this would take about 30 minutes (1 epoch $\approx$ 200 s)
 \end{itemize}
 \begin{lstlisting}[
     basicstyle=\tiny, %or \small or \footnotesize etc.
 ]
-Using gpu device 0: Tesla K40m 
-Using Theano backend.
-Compiling model...
-Model compilation took 0.1 minutes.
+Using gpu device 0: Tesla P100
 Training...
 Train on 60000 samples, validate on 10000 samples
 Epoch 1/10
-60000/60000 [================] - 31s - loss: 0.2193 - acc: 0.9322 - val_loss: 0.0519 - val_acc: 0.9835
+60000/60000 [==============================] - 10s 159us/sample - loss: 0.1043 - accuracy: 0.9683 - val_loss: 0.0367 - val_accuracy: 0.9883
 Epoch 2/10
-60000/60000 [================] - 31s - loss: 0.0807 - acc: 0.9758 - val_loss: 0.0398 - val_acc: 0.9863
+60000/60000 [==============================] - 7s 118us/sample - loss: 0.0371 - accuracy: 0.9883 - val_loss: 0.0391 - val_accuracy: 0.9871
 Epoch 3/10
-60000/60000 [================] - 31s - loss: 0.0581 - acc: 0.9825 - val_loss: 0.0322 - val_acc: 0.9898
+60000/60000 [==============================] - 7s 119us/sample - loss: 0.0251 - accuracy: 0.9918 - val_loss: 0.0264 - val_accuracy: 0.9920
 Epoch 4/10
-60000/60000 [================] - 31s - loss: 0.0500 - acc: 0.9851 - val_loss: 0.0276 - val_acc: 0.9913
+60000/60000 [==============================] - 7s 119us/sample - loss: 0.0175 - accuracy: 0.9944 - val_loss: 0.0281 - val_accuracy: 0.9916
 Epoch 5/10
-60000/60000 [================] - 31s - loss: 0.0430 - acc: 0.9872 - val_loss: 0.0287 - val_acc: 0.9906
+60000/60000 [==============================] - 7s 117us/sample - loss: 0.0132 - accuracy: 0.9957 - val_loss: 0.0354 - val_accuracy: 0.9899
 Epoch 6/10
-60000/60000 [================] - 31s - loss: 0.0387 - acc: 0.9882 - val_loss: 0.0246 - val_acc: 0.9922
+60000/60000 [==============================] - 7s 119us/sample - loss: 0.0101 - accuracy: 0.9969 - val_loss: 0.0362 - val_accuracy: 0.9895
 Epoch 7/10
-60000/60000 [================] - 31s - loss: 0.0352 - acc: 0.9897 - val_loss: 0.0270 - val_acc: 0.9913
+60000/60000 [==============================] - 7s 118us/sample - loss: 0.0083 - accuracy: 0.9973 - val_loss: 0.0504 - val_accuracy: 0.9896
 Epoch 8/10
-60000/60000 [================] - 31s - loss: 0.0324 - acc: 0.9902 - val_loss: 0.0223 - val_acc: 0.9928
+60000/60000 [==============================] - 7s 117us/sample - loss: 0.0070 - accuracy: 0.9977 - val_loss: 0.0442 - val_accuracy: 0.9905
 Epoch 9/10
-60000/60000 [================] - 31s - loss: 0.0294 - acc: 0.9907 - val_loss: 0.0221 - val_acc: 0.9926
+60000/60000 [==============================] - 7s 118us/sample - loss: 0.0065 - accuracy: 0.9977 - val_loss: 0.0408 - val_accuracy: 0.9907
 Epoch 10/10
-60000/60000 [================] - 31s - loss: 0.0252 - acc: 0.9922 - val_loss: 0.0271 - val_acc: 0.9916
-Training (10 epochs) took 5.8 minutes.
+60000/60000 [==============================] - 7s 117us/sample - loss: 0.0070 - accuracy: 0.9976 - val_loss: 0.0444 - val_accuracy: 0.9906
+Training took 1.2 minutes.
 \end{lstlisting}
 \end{frame}
 
